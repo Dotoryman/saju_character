@@ -60,12 +60,9 @@ YTV 등장인물 페이지에서 제공하는 캐릭터별 이미지를 1순위 
 
 ## 현재 내려받은 후보
 
-| 로컬 파일 | 캐릭터/작품 | 원본 URL | 상태 |
-| --- | --- | --- | --- |
-| `ghibli/ghibli-ponyo-001.jpg` | 포뇨 작품 장면 | `https://www.ghibli.jp/gallery/ponyo001.jpg` | 장면 적합성 검토 필요 |
-| `ghibli/ghibli-chihiro-001.jpg` | 치히로 | `https://www.ghibli.jp/gallery/chihiro001.jpg` | 후보 |
-| `inuyasha/inuyasha-inuyasha-01.jpg` | 이누야샤 | `https://www.ytv.co.jp/inuyasha/cast/2000_cast/img/01.jpg` | 후보 |
-| `inuyasha/inuyasha-sesshomaru-01.jpg` | 셋쇼마루 | `https://www.ytv.co.jp/inuyasha/cast/2000_cast/img/06.jpg` | 후보 |
+없음. 초기 후보는 캐릭터가 선명하게 보이지 않는 장면이 포함되어 모두 제거했다.
+이미지 수집을 재개할 때는 얼굴 또는 전신이 명확한 캐릭터 중심 이미지만 후보로
+보관한다.
 
 ## 구현 규칙
 

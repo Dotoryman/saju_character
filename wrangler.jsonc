@@ -12,12 +12,18 @@
     {
       "binding": "DB",
       "database_name": "ganji-character-db",
-      "database_id": "local-placeholder",
+      "database_id": "36a917f3-1607-49d3-a7a4-bd8bfa02c752",
       "migrations_dir": "./migrations"
     }
   ],
+  "r2_buckets": [
+    {
+      "binding": "ASSETS_BUCKET",
+      "bucket_name": "ganji-character-assets"
+    }
+  ],
   "vars": {
-    "ENVIRONMENT": "local"
+    "ENVIRONMENT": "production"
   },
   "observability": {
     "enabled": true,

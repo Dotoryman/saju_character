@@ -15,7 +15,7 @@
 - TypeScript, React, Vite
 - Cloudflare Vite Plugin, Workers Static Assets
 - Cloudflare Worker API
-- Cloudflare D1
+- Cloudflare D1, R2
 - Vitest
 
 프론트엔드와 Worker API는 하나의 Cloudflare 배포 단위로 빌드됩니다.
@@ -53,9 +53,8 @@ npm run db:migrate:local
 npm run db:migrate:remote
 ```
 
-실제 배포 전에 Cloudflare에서 D1 데이터베이스를 생성하고 `wrangler.jsonc`의
-`database_id`에 발급된 ID를 넣어야 합니다. Worker 안에서는 REST API가 아닌
-`DB` binding으로만 접근합니다.
+운영 D1 데이터베이스는 `ganji-character-db`이며 Worker의 `DB` binding으로
+연결됩니다. Worker 안에서는 REST API가 아닌 binding으로만 접근합니다.
 
 ## 이미지와 R2
 
@@ -64,8 +63,10 @@ npm run db:migrate:remote
 연결합니다. 검토 전 파일은 `public/assets/references/`, 승인된 실제 자산은
 `public/assets/characters/`에 둡니다.
 
-R2는 승인된 원본 이미지가 많아질 때 추가합니다. 공유 PNG는 우선 클라이언트에서
-생성하므로 MVP 단계에서 결과 이미지를 R2에 영구 저장하지 않습니다.
+운영 R2 버킷은 `ganji-character-assets`이며 `ASSETS_BUCKET` binding으로
+연결됩니다. 승인된 이미지와 서비스 일러스트를 이 버킷에 보관합니다. 공유 PNG는
+우선 클라이언트에서 생성하므로 MVP 단계에서 결과 이미지를 R2에 영구 저장하지
+않습니다.
 
 ## 환경변수와 비밀값
 
@@ -80,12 +81,10 @@ VITE_KAKAO_JAVASCRIPT_KEY=
 
 ## 배포
 
-1. Cloudflare D1 데이터베이스 생성
-2. `wrangler.jsonc`에 실제 D1 ID 반영
-3. 원격 migration 적용
-4. `npm run deploy:dry`
-5. `npm run deploy`
-6. Worker Custom Domain에 `sajusaju.cloud` 연결
+1. 원격 D1 migration 적용
+2. `npm run deploy:dry`
+3. `npm run deploy`
+4. Worker Custom Domain에 `sajusaju.cloud` 연결
 
 Cloudflare DNS에서 도메인이 활성화된 뒤 Worker의 Custom Domain으로 연결합니다.
 GitHub 연동 배포를 사용할 경우 저장소 `saju_character`의 `main` 브랜치를 production
