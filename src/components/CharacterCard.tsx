@@ -8,7 +8,7 @@ const SYMBOLS: Record<CharacterResult["theme"], string> = {
   ghibli: "風",
 };
 
-export function CharacterCard({ character }: { character: CharacterResult }) {
+export function CharacterCard({ character, index }: { character: CharacterResult; index: number }) {
   const [imageFailed, setImageFailed] = useState(false);
 
   return (
@@ -27,9 +27,13 @@ export function CharacterCard({ character }: { character: CharacterResult }) {
             <small>{character.characterName}</small>
           </div>
         )}
+        <span className="image-label">CHARACTER MATCH</span>
       </div>
       <div className="character-copy">
-        <p className="eyebrow">{character.themeName}</p>
+        <div className="character-card-head">
+          <p className="eyebrow">{character.themeName}</p>
+          <span className="match-index">0{index + 1}</span>
+        </div>
         <h3>{character.characterName}</h3>
         <strong>{character.tagline}</strong>
         <p>{character.description}</p>

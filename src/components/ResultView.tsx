@@ -108,8 +108,8 @@ export function ResultView({ result }: { result: ResultViewModel }) {
           <p>공식 생일이 아닌 능력과 분위기, 상징성을 연결한 재미있는 콘텐츠입니다.</p>
         </div>
         <div className="character-grid">
-          {result.characters.map((character) => (
-            <CharacterCard key={character.theme} character={character} />
+          {result.characters.map((character, index) => (
+            <CharacterCard key={character.theme} character={character} index={index} />
           ))}
         </div>
       </section>

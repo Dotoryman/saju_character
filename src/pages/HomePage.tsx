@@ -65,45 +65,52 @@ export function HomePage() {
         <p className="hero-lede">생년월일 하나로 찾아보는 나의 일주와 대표 동물, 그리고 네 세계의 닮은 캐릭터.</p>
 
         <form className="discovery-form" onSubmit={(event) => void handleSubmit(event)}>
-          <label>
-            <span>닉네임</span>
-            <input
-              autoComplete="nickname"
-              maxLength={20}
-              name="nickname"
-              onChange={(event) => setNickname(event.target.value)}
-              placeholder="어떻게 불러드릴까요?"
-              required
-              value={nickname}
-            />
-          </label>
-          <fieldset className="birth-fieldset">
-            <legend>생년월일 · 양력</legend>
-            <label className="select-field">
-              <span className="sr-only">출생 연도</span>
-              <select name="birthYear" onChange={(event) => changeYear(event.target.value)} required value={birthYear}>
-                <option value="">연도</option>
-                {years.map((year) => <option key={year} value={year}>{year}년</option>)}
-              </select>
+          <div className="form-heading">
+            <span className="form-step">01</span>
+            <div><strong>나의 기본 정보</strong><small>두 가지만 알려주세요</small></div>
+          </div>
+          <div className="form-fields">
+            <label className="nickname-field">
+              <span>닉네임</span>
+              <input
+                autoComplete="nickname"
+                maxLength={20}
+                name="nickname"
+                onChange={(event) => setNickname(event.target.value)}
+                placeholder="어떻게 불러드릴까요?"
+                required
+                value={nickname}
+              />
             </label>
-            <label className="select-field">
-              <span className="sr-only">출생 월</span>
-              <select name="birthMonth" onChange={(event) => changeMonth(event.target.value)} required value={birthMonth}>
-                <option value="">월</option>
-                {months.map((month) => <option key={month} value={month}>{month}월</option>)}
-              </select>
-            </label>
-            <label className="select-field">
-              <span className="sr-only">출생 일</span>
-              <select name="birthDay" onChange={(event) => setBirthDay(event.target.value)} required value={birthDay}>
-                <option value="">일</option>
-                {days.map((day) => <option key={day} value={day}>{day}일</option>)}
-              </select>
-            </label>
-          </fieldset>
+            <fieldset className="birth-fieldset">
+              <legend><span>생년월일</span><small>양력 기준</small></legend>
+              <label className="select-field">
+                <span>연도</span>
+                <select name="birthYear" onChange={(event) => changeYear(event.target.value)} required value={birthYear}>
+                  <option value="">YYYY</option>
+                  {years.map((year) => <option key={year} value={year}>{year}년</option>)}
+                </select>
+              </label>
+              <label className="select-field">
+                <span>월</span>
+                <select name="birthMonth" onChange={(event) => changeMonth(event.target.value)} required value={birthMonth}>
+                  <option value="">MM</option>
+                  {months.map((month) => <option key={month} value={month}>{month}월</option>)}
+                </select>
+              </label>
+              <label className="select-field">
+                <span>일</span>
+                <select name="birthDay" onChange={(event) => setBirthDay(event.target.value)} required value={birthDay}>
+                  <option value="">DD</option>
+                  {days.map((day) => <option key={day} value={day}>{day}일</option>)}
+                </select>
+              </label>
+            </fieldset>
+          </div>
           {error && <p className="form-error" role="alert">{error}</p>}
           <button className="button primary submit-button" disabled={isLoading} type="submit">
-            {isLoading ? "캐릭터를 찾는 중…" : "내 캐릭터 찾기"}
+            <span>{isLoading ? "캐릭터를 찾는 중…" : "내 캐릭터 찾기"}</span>
+            {!isLoading && <span aria-hidden="true">→</span>}
           </button>
         </form>
         <p className="privacy-note">성별과 출생시간은 필요하지 않아요. 공개 결과에는 생일 전체가 표시되지 않습니다.</p>
