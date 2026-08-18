@@ -1,0 +1,14 @@
+node_modules/
+dist/
+.wrangler/
+.dev.vars
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+coverage/
+worker-configuration.d.ts
+/public/assets/references/**/*.jpg
+/public/assets/references/**/*.png
+/public/assets/references/**/*.webp
