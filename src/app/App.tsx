@@ -3,13 +3,13 @@ import { AboutPage } from "../pages/AboutPage";
 import { ExplorePage } from "../pages/ExplorePage";
 import { HomePage } from "../pages/HomePage";
 import { ResultPage } from "../pages/ResultPage";
+import packageInfo from "../../package.json";
 
 export function App() {
   return (
     <div className="site-shell">
       <header className="site-header">
         <Link className="brand" to="/" aria-label="메인으로 가기">
-          <span className="brand-mark">日</span>
           <span>메인으로 가기</span>
         </Link>
         <nav aria-label="주요 메뉴">
@@ -29,8 +29,8 @@ export function App() {
       </main>
 
       <footer className="site-footer">
-        <span>sajusaju.cloud</span>
-        <span>운세가 아닌, 당신의 일주가 가진 이미지를 찾습니다.</span>
+        <span>버젼 : v{packageInfo.version}</span>
+        <span>만든이 : 남도령</span>
       </footer>
     </div>
   );

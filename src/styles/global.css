@@ -27,8 +27,8 @@ button, a { -webkit-tap-highlight-color: transparent; }
 
 .site-shell { min-height: 100vh; display: flex; flex-direction: column; }
 .site-header { height: 76px; padding: 0 clamp(20px, 5vw, 72px); display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(23,23,21,.09); position: sticky; top: 0; z-index: 20; background: rgba(242,238,229,.82); backdrop-filter: blur(18px) saturate(1.15); }
-.brand { display: flex; align-items: center; gap: 10px; font-weight: 800; letter-spacing: -0.04em; }
-.brand-mark { width: 36px; height: 36px; display: grid; place-items: center; border-radius: 12px; background: var(--ink); color: var(--paper); font-family: "Gowun Batang", serif; box-shadow: 0 8px 24px rgba(23,23,21,.16); }
+.brand { padding: 9px 12px; border-radius: 999px; font-weight: 800; letter-spacing: -0.04em; transition: background .2s ease; }
+.brand:hover { background: rgba(255,255,255,.65); }
 .site-header nav { display: flex; gap: 4px; padding: 4px; border: 1px solid rgba(23,23,21,.08); border-radius: 999px; background: rgba(255,255,255,.35); font-size: 13px; font-weight: 700; }
 .site-header nav a { padding: 8px 14px; border-radius: 999px; color: var(--muted); transition: color .2s ease, background .2s ease; }
 .site-header nav a:hover, .site-header nav a.active { color: var(--ink); background: rgba(255,255,255,.76); }
@@ -133,16 +133,26 @@ main { flex: 1; }
 .page-intro h1, .about-page h1 { margin: 14px 0 22px; font-family: "Gowun Batang", serif; font-size: clamp(44px, 7vw, 82px); line-height: 1.08; letter-spacing: -.06em; font-weight: 400; }
 .page-intro > p:last-child { color: var(--muted); }
 .feed-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-.feed-card { --element: var(--fire); min-height: 390px; padding: 24px; position: relative; overflow: hidden; display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: 26px; background: linear-gradient(145deg, color-mix(in srgb, var(--element) 6%, transparent), transparent 44%), var(--paper); box-shadow: 0 14px 36px rgba(43,35,25,.045); transition: transform .2s ease, box-shadow .2s ease; }
+.feed-card { --feed-color: #e8523c; min-height: 390px; padding: 24px; position: relative; overflow: hidden; display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: 26px; background: linear-gradient(145deg, color-mix(in srgb, var(--feed-color) 7%, transparent), transparent 44%), var(--paper); box-shadow: 0 14px 36px rgba(43,35,25,.045); transition: transform .2s ease, box-shadow .2s ease; }
+.feed-card.element-fire { --feed-color: #e8523c; }
+.feed-card.element-wood { --feed-color: #3478b8; }
+.feed-card.element-earth { --feed-color: #d5a51f; }
+.feed-card.element-metal { --feed-color: #fff; }
+.feed-card.element-water { --feed-color: #171715; }
 .feed-card:hover { transform: translateY(-5px); box-shadow: 0 20px 50px rgba(43,35,25,.1); }
 .feed-user { display: flex; justify-content: space-between; color: var(--muted); font-size: 11px; }
-.feed-ganji { margin: auto 0 0; color: var(--element); font-family: "Gowun Batang", serif; font-size: 80px; font-weight: 400; line-height: 1; letter-spacing: -.12em; }
+.feed-main { margin: auto 0 20px; display: grid; grid-template-columns: minmax(0, 1fr) 132px; align-items: end; gap: 18px; }
+.feed-copy { min-width: 0; }
+.feed-ganji { display: block; color: var(--feed-color); font-family: "Gowun Batang", serif; font-size: 72px; font-weight: 400; line-height: 1; letter-spacing: -.12em; }
+.feed-card.element-metal .feed-ganji { -webkit-text-stroke: 1px rgba(23,23,21,.35); text-shadow: 0 3px 12px rgba(23,23,21,.12); }
 .feed-card h2 { margin: 18px 0 5px; font-size: 24px; }
-.feed-card > p { margin: 0 0 20px; color: var(--muted); font-family: "Gowun Batang", serif; }
+.feed-copy > p { margin: 0; color: var(--muted); font-family: "Gowun Batang", serif; }
+.feed-character-image { height: 198px; margin: 0; position: relative; overflow: hidden; border: 1px solid rgba(23,23,21,.1); border-radius: 18px; background: rgba(23,23,21,.06); box-shadow: 0 14px 32px rgba(43,35,25,.12); }
+.feed-character-image img { width: 100%; height: 100%; display: block; object-fit: cover; object-position: center 16%; }
+.feed-character-image::after { content: ""; position: absolute; inset: 48% 0 0; background: linear-gradient(transparent, rgba(0,0,0,.65)); pointer-events: none; }
+.feed-character-image figcaption { position: absolute; z-index: 1; right: 10px; bottom: 9px; left: 10px; overflow: hidden; color: #fff; font-size: 11px; font-weight: 800; text-align: center; text-overflow: ellipsis; white-space: nowrap; }
 .feed-animal { display: flex; align-items: baseline; justify-content: space-between; padding-top: 15px; border-top: 1px solid var(--line); }
 .feed-animal span { color: var(--muted); font-size: 11px; }
-.feed-characters { margin-top: 16px; display: flex; gap: 6px; flex-wrap: wrap; }
-.feed-characters span { padding: 6px 9px; border-radius: 99px; background: rgba(23,23,21,.06); font-size: 10px; }
 .load-more { margin: 40px auto 0; display: flex; }
 .empty-state { padding: 90px 20px; text-align: center; border: 1px solid var(--line); border-radius: 24px; }
 .empty-state > span, .loading-mark { font-family: "Gowun Batang", serif; font-size: 80px; color: var(--accent); }
@@ -171,8 +181,7 @@ main { flex: 1; }
 
 @media (max-width: 620px) {
   .site-header { height: 64px; }
-  .brand { gap: 7px; font-size: 12px; }
-  .brand-mark { width: 32px; height: 32px; border-radius: 10px; }
+  .brand { padding: 8px 4px; font-size: 12px; }
   .site-header nav { gap: 2px; padding: 3px; font-size: 10px; }
   .site-header nav a { padding: 7px 8px; }
   .site-footer { flex-direction: column; }
@@ -203,6 +212,9 @@ main { flex: 1; }
   .image-label { display: none; }
   .character-visual span { font-size: 70px; }
   .feed-grid { grid-template-columns: 1fr; }
+  .feed-main { grid-template-columns: minmax(0, 1fr) 112px; gap: 14px; }
+  .feed-ganji { font-size: 60px; }
+  .feed-character-image { height: 168px; border-radius: 15px; }
   .about-rule { grid-template-columns: 1fr; gap: 8px; }
 }
 

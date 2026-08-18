@@ -110,11 +110,15 @@ export async function createShareImage(result: ResultViewModel): Promise<Blob> {
   context.textBaseline = "middle";
   context.fillStyle = accent;
   context.font = '800 25px Inter, "Noto Sans KR", sans-serif';
-  drawCenteredText(context, "MY DAY PILLAR · SAJUSAJU", 90);
+  drawCenteredText(context, "MY DAY PILLAR · SAJUSAJU", 64);
+
+  context.fillStyle = muted;
+  context.font = '600 25px "Noto Sans KR", sans-serif';
+  drawCenteredText(context, `“${result.user.displayNickname}” 님의 일주는`, 112, 880);
 
   context.fillStyle = ink;
   context.font = '400 150px "Gowun Batang", "Noto Serif KR", serif';
-  drawCenteredText(context, result.ganji, 220);
+  drawCenteredText(context, result.ganji, 230);
 
   context.font = '700 44px "Noto Sans KR", sans-serif';
   drawCenteredText(context, `${result.ganjiKr}일주`, 335);

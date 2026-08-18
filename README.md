@@ -103,6 +103,7 @@ GitHub 연동 배포를 사용할 경우 저장소 `saju_character`의 `main` �
 - 일주와 대표 동물만 보여주는 간결한 결과 요약 배너
 - 캐릭터 초상이 포함된 1080×1350 결과 PNG 저장
 - Open Graph·카카오 링크 미리보기 이미지와 캐릭터 파비콘
+- 오행별 색상과 대표 캐릭터 이미지가 표시되는 둘러보기 카드
 - 공개 응답 단계의 닉네임·생년월일 masking
 - cursor 기반 Explore 피드
 - 모바일 Web Share 및 URL 복사 fallback
