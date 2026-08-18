@@ -1,3 +1,4 @@
+import { useState } from "react";
 import type { CharacterResult } from "../data/characterMappings";
 
 const SYMBOLS: Record<CharacterResult["theme"], string> = {
@@ -8,11 +9,24 @@ const SYMBOLS: Record<CharacterResult["theme"], string> = {
 };
 
 export function CharacterCard({ character }: { character: CharacterResult }) {
+  const [imageFailed, setImageFailed] = useState(false);
+
   return (
     <article className={`character-card theme-${character.theme}`}>
-      <div className="character-visual" aria-hidden="true">
-        <span>{SYMBOLS[character.theme]}</span>
-        <small>IMAGE LATER</small>
+      <div className="character-visual">
+        {character.imageKey && !imageFailed ? (
+          <img
+            alt={`${character.themeName} ${character.characterName} 캐릭터`}
+            loading="lazy"
+            onError={() => setImageFailed(true)}
+            src={character.imageKey}
+          />
+        ) : (
+          <div className="character-image-fallback" aria-hidden="true">
+            <span>{SYMBOLS[character.theme]}</span>
+            <small>{character.characterName}</small>
+          </div>
+        )}
       </div>
       <div className="character-copy">
         <p className="eyebrow">{character.themeName}</p>
@@ -23,4 +37,3 @@ export function CharacterCard({ character }: { character: CharacterResult }) {
     </article>
   );
 }
-

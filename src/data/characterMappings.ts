@@ -46,7 +46,7 @@ export function getCharacterResults(cycleIndex: number, animalName: string): Cha
       characterName,
       tagline: TAGLINES[theme.slug],
       description: `${characterName}처럼 자신만의 존재감이 분명합니다. 대표 동물 ${animalName}의 이미지와 닮은 매력을 발견해 보세요.`,
-      imageKey: `${theme.slug}/${characterName}`,
+      imageKey: `/media/characters/${encodeURIComponent(theme.slug)}/${encodeURIComponent(characterName)}`,
     };
   });
 }

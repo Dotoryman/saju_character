@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { getArchetype } from "../src/data/archetypes";
 import { getCharacterResults } from "../src/data/characterMappings";
+import { CHARACTER_IMAGE_SOURCES } from "../src/data/characterImageSources.generated";
 import { maskBirthDate, maskNickname } from "../src/domain/privacy/mask";
 import { calculateDayPillar } from "../src/domain/saju/calculateDayPillar";
 import type { ResultViewModel } from "../src/shared/result";
@@ -23,6 +24,43 @@ function json(data: unknown, init: ResponseInit = {}): Response {
   headers.set("content-type", "application/json; charset=utf-8");
   headers.set("cache-control", "no-store");
   return new Response(JSON.stringify(data), { ...init, headers });
+}
+
+async function getCharacterImage(pathname: string, env: Env): Promise<Response> {
+  const match = /^\/media\/characters\/([^/]+)\/([^/]+)$/.exec(pathname);
+  if (!match?.[1] || !match[2]) return new Response("Not found", { status: 404 });
+
+  const theme = decodeURIComponent(match[1]);
+  const characterName = decodeURIComponent(match[2]);
+  const mappingKey = `${theme}|${characterName}`;
+  const sourceUrl = CHARACTER_IMAGE_SOURCES[mappingKey];
+  if (!sourceUrl) return new Response("Not found", { status: 404 });
+
+  const objectKey = `characters/${theme}/${characterName}.jpg`;
+  const cached = await env.ASSETS_BUCKET.get(objectKey);
+  if (cached) {
+    const headers = new Headers();
+    cached.writeHttpMetadata(headers);
+    headers.set("cache-control", "public, max-age=2592000, immutable");
+    headers.set("x-content-type-options", "nosniff");
+    return new Response(cached.body, { headers });
+  }
+
+  const upstream = await fetch(sourceUrl, { headers: { accept: "image/avif,image/webp,image/*" } });
+  if (!upstream.ok) return new Response("Image unavailable", { status: 502 });
+  const bytes = await upstream.arrayBuffer();
+  const contentType = upstream.headers.get("content-type") || "image/jpeg";
+  await env.ASSETS_BUCKET.put(objectKey, bytes, {
+    httpMetadata: { contentType },
+    customMetadata: { source: "AniList", sourceUrl },
+  });
+  return new Response(bytes, {
+    headers: {
+      "content-type": contentType,
+      "cache-control": "public, max-age=2592000, immutable",
+      "x-content-type-options": "nosniff",
+    },
+  });
 }
 
 function toViewModel(row: ResultRow): ResultViewModel {
@@ -127,6 +165,10 @@ async function getFeed(url: URL, env: Env): Promise<Response> {
 async function route(request: Request, env: Env): Promise<Response> {
   const url = new URL(request.url);
   const pathname = url.pathname;
+
+  if (pathname.startsWith("/media/characters/") && request.method === "GET") {
+    return getCharacterImage(pathname, env);
+  }
 
   if (pathname === "/api/health" && request.method === "GET") {
     return json({ ok: true, environment: env.ENVIRONMENT });

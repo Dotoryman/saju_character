@@ -58,10 +58,11 @@ npm run db:migrate:remote
 
 ## 이미지와 R2
 
-현재 UI는 이미지가 없어도 동작하는 문자 기반 placeholder를 사용합니다. 추후
-캐릭터가 선명하게 보이는 세로형 또는 투명 배경 이미지를 검토한 뒤 `imageKey`로
-연결합니다. 검토 전 파일은 `public/assets/references/`, 승인된 실제 자산은
-`public/assets/characters/`에 둡니다.
+캐릭터 초상 이미지는 AniList의 캐릭터 메타데이터로 129개 고유 캐릭터를 매핑하고,
+Worker의 동일 출처 `/media/characters/*` 경로로 제공합니다. 최초 요청 시 원본을
+가져와 R2에 캐시하므로 이후 요청은 `ganji-character-assets`에서 처리됩니다. 매핑
+생성 스크립트는 `scripts/fetch-character-images.mjs`, 검수 자료는
+`docs/character-image-audit.json`에서 관리합니다.
 
 운영 R2 버킷은 `ganji-character-assets`이며 `ASSETS_BUCKET` binding으로
 연결됩니다. 승인된 이미지와 서비스 일러스트를 이 버킷에 보관합니다. 공유 PNG는
@@ -102,6 +103,9 @@ GitHub 연동 배포를 사용할 경우 저장소 `saju_character`의 `main` �
 - 모바일 Web Share 및 URL 복사 fallback
 - 1080×1350 공유 PNG 생성 및 다운로드 fallback
 - 공유 횟수 집계와 Kakao SDK adapter
+- 연도·월·일 선택형 생년월일 입력
+- 결과 설명과 캐릭터 확인 후 공유하는 화면 흐름
+- 129개 고유 캐릭터 초상 이미지와 R2 자동 캐시
 - 반응형 레이아웃과 reduced-motion 대응
 
 ## 다음 단계
@@ -109,5 +113,5 @@ GitHub 연동 배포를 사용할 경우 저장소 `saju_character`의 `main` �
 - 캐릭터별 전용 설명 240개 고도화
 - 캐릭터 중심 이미지 검토 및 `imageKey` 연결
 - 카카오 JavaScript Key 발급 후 실제 SDK 연결
-- 승인된 캐릭터 이미지의 R2 업로드와 `imageKey` 연결
+- 사용자 검토 이미지로 캐릭터 초상 교체
 - 캐릭터별 전용 설명 240개 콘텐츠 검수

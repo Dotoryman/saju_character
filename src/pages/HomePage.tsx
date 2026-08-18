@@ -5,7 +5,9 @@ import { createResult } from "../lib/api";
 export function HomePage() {
   const navigate = useNavigate();
   const [nickname, setNickname] = useState("");
-  const [birthDate, setBirthDate] = useState("");
+  const [birthYear, setBirthYear] = useState("");
+  const [birthMonth, setBirthMonth] = useState("");
+  const [birthDay, setBirthDay] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -13,7 +15,10 @@ export function HomePage() {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const submittedNickname = String(formData.get("nickname") ?? "");
-    const submittedBirthDate = String(formData.get("birthDate") ?? "");
+    const year = String(formData.get("birthYear") ?? "");
+    const month = String(formData.get("birthMonth") ?? "");
+    const day = String(formData.get("birthDay") ?? "");
+    const submittedBirthDate = year && month && day ? `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}` : "";
     setError("");
     setIsLoading(true);
     try {
@@ -23,6 +28,30 @@ export function HomePage() {
       setError(caught instanceof Error ? caught.message : "잠시 후 다시 시도해 주세요.");
     } finally {
       setIsLoading(false);
+    }
+  }
+
+  const currentYear = new Date().getFullYear();
+  const years = Array.from({ length: currentYear - 1899 }, (_, index) => currentYear - index);
+  const months = Array.from({ length: 12 }, (_, index) => index + 1);
+  const dayCount = birthYear && birthMonth
+    ? new Date(Number(birthYear), Number(birthMonth), 0).getDate()
+    : 31;
+  const days = Array.from({ length: dayCount }, (_, index) => index + 1);
+
+  function changeYear(value: string) {
+    setBirthYear(value);
+    if (birthDay && birthMonth) {
+      const nextDayCount = new Date(Number(value), Number(birthMonth), 0).getDate();
+      if (Number(birthDay) > nextDayCount) setBirthDay(String(nextDayCount));
+    }
+  }
+
+  function changeMonth(value: string) {
+    setBirthMonth(value);
+    if (birthDay && birthYear) {
+      const nextDayCount = new Date(Number(birthYear), Number(value), 0).getDate();
+      if (Number(birthDay) > nextDayCount) setBirthDay(String(nextDayCount));
     }
   }
 
@@ -48,18 +77,30 @@ export function HomePage() {
               value={nickname}
             />
           </label>
-          <label>
-            <span>생년월일 · 양력</span>
-            <input
-              max="2026-08-18"
-              min="1900-01-01"
-              name="birthDate"
-              onChange={(event) => setBirthDate(event.target.value)}
-              required
-              type="date"
-              value={birthDate}
-            />
-          </label>
+          <fieldset className="birth-fieldset">
+            <legend>생년월일 · 양력</legend>
+            <label className="select-field">
+              <span className="sr-only">출생 연도</span>
+              <select name="birthYear" onChange={(event) => changeYear(event.target.value)} required value={birthYear}>
+                <option value="">연도</option>
+                {years.map((year) => <option key={year} value={year}>{year}년</option>)}
+              </select>
+            </label>
+            <label className="select-field">
+              <span className="sr-only">출생 월</span>
+              <select name="birthMonth" onChange={(event) => changeMonth(event.target.value)} required value={birthMonth}>
+                <option value="">월</option>
+                {months.map((month) => <option key={month} value={month}>{month}월</option>)}
+              </select>
+            </label>
+            <label className="select-field">
+              <span className="sr-only">출생 일</span>
+              <select name="birthDay" onChange={(event) => setBirthDay(event.target.value)} required value={birthDay}>
+                <option value="">일</option>
+                {days.map((day) => <option key={day} value={day}>{day}일</option>)}
+              </select>
+            </label>
+          </fieldset>
           {error && <p className="form-error" role="alert">{error}</p>}
           <button className="button primary submit-button" disabled={isLoading} type="submit">
             {isLoading ? "캐릭터를 찾는 중…" : "내 캐릭터 찾기"}

@@ -99,14 +99,6 @@ export function ResultView({ result }: { result: ResultViewModel }) {
           <strong>{result.archetype.animal}</strong>
         </div>
         <p className="result-description">{result.archetype.description}</p>
-        <div className="result-actions">
-          <button className="button primary" disabled={isSharing} type="button" onClick={() => void shareResult()}>공유하기</button>
-          <button className="button secondary" disabled={isSharing} type="button" onClick={() => void saveImage()}>이미지 저장</button>
-          <button className="button secondary" disabled={isSharing} type="button" onClick={() => void shareKakao()}>카카오톡</button>
-          <Link className="button secondary" to="/">다시 찾아보기</Link>
-        </div>
-        <p className="share-help">Instagram은 이미지를 저장한 뒤 앱에서 선택해 주세요.</p>
-        <p className="share-status" aria-live="polite">{shareStatus}</p>
       </section>
 
       <section className="character-section" aria-labelledby="character-title">
@@ -120,6 +112,20 @@ export function ResultView({ result }: { result: ResultViewModel }) {
             <CharacterCard key={character.theme} character={character} />
           ))}
         </div>
+      </section>
+
+      <section className="result-share-section" aria-labelledby="share-title">
+        <p className="eyebrow">KEEP &amp; SHARE</p>
+        <h2 id="share-title">이제 결과를 간직해보세요.</h2>
+        <p>캐릭터까지 모두 확인했다면 세로형 결과 이미지로 저장하거나 친구에게 공유할 수 있어요.</p>
+        <div className="result-actions">
+          <button className="button primary" disabled={isSharing} type="button" onClick={() => void shareResult()}>공유하기</button>
+          <button className="button secondary" disabled={isSharing} type="button" onClick={() => void saveImage()}>이미지 저장</button>
+          <button className="button secondary" disabled={isSharing} type="button" onClick={() => void shareKakao()}>카카오톡</button>
+          <Link className="button secondary" to="/">다시 찾아보기</Link>
+        </div>
+        <p className="share-help">Instagram은 이미지를 저장한 뒤 앱에서 선택해 주세요.</p>
+        <p className="share-status" aria-live="polite">{shareStatus}</p>
       </section>
     </div>
   );
