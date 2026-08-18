@@ -34,3 +34,7 @@ export async function fetchFeed(cursor?: string): Promise<FeedResponse> {
   return readJson<FeedResponse>(await fetch(`/api/feed?${query}`));
 }
 
+export async function trackShare(publicId: string): Promise<void> {
+  const response = await fetch(`/api/results/${encodeURIComponent(publicId)}/share`, { method: "POST" });
+  if (!response.ok) throw new Error("공유 횟수를 기록하지 못했습니다.");
+}

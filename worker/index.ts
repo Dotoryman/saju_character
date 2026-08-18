@@ -141,6 +141,14 @@ async function route(request: Request, env: Env): Promise<Response> {
   if (resultMatch?.[1] && request.method === "GET") {
     return getResult(resultMatch[1], env);
   }
+  const shareMatch = /^\/api\/results\/([A-Za-z0-9]+)\/share$/.exec(pathname);
+  if (shareMatch?.[1] && request.method === "POST") {
+    const update = await env.DB.prepare(
+      "UPDATE results SET share_count = share_count + 1 WHERE public_id = ? AND is_public = 1",
+    ).bind(shareMatch[1]).run();
+    if (!update.meta.changes) return json({ error: "결과를 찾을 수 없습니다." }, { status: 404 });
+    return json({ ok: true });
+  }
 
   return json({ error: "API 경로를 찾을 수 없습니다." }, { status: 404 });
 }
@@ -159,4 +167,3 @@ export default {
     }
   },
 } satisfies ExportedHandler<Env>;
-

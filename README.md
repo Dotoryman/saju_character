@@ -100,12 +100,14 @@ GitHub 연동 배포를 사용할 경우 저장소 `saju_character`의 `main` �
 - 공개 응답 단계의 닉네임·생년월일 masking
 - cursor 기반 Explore 피드
 - 모바일 Web Share 및 URL 복사 fallback
+- 1080×1350 공유 PNG 생성 및 다운로드 fallback
+- 공유 횟수 집계와 Kakao SDK adapter
 - 반응형 레이아웃과 reduced-motion 대응
 
 ## 다음 단계
 
 - 캐릭터별 전용 설명 240개 고도화
 - 캐릭터 중심 이미지 검토 및 `imageKey` 연결
-- 1080×1350 공유 PNG renderer
-- Kakao 공유 adapter
-- 원격 D1/R2와 Custom Domain 연결
+- 카카오 JavaScript Key 발급 후 실제 SDK 연결
+- 승인된 캐릭터 이미지의 R2 업로드와 `imageKey` 연결
+- 캐릭터별 전용 설명 240개 콘텐츠 검수

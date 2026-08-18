@@ -86,6 +86,9 @@ main { flex: 1; }
 .animal-block strong { font-size: clamp(34px, 5vw, 56px); letter-spacing: -.06em; }
 .result-description { max-width: 620px; margin: 24px auto 32px; line-height: 1.85; color: var(--muted); word-break: keep-all; }
 .result-actions { display: flex; gap: 10px; }
+.result-actions { flex-wrap: wrap; justify-content: center; }
+.share-help { margin: 14px 0 0; color: var(--muted); font-size: 12px; }
+.share-status { min-height: 20px; margin: 6px 0 0; color: var(--element); font-size: 12px; font-weight: 700; }
 .character-section { padding: 100px clamp(20px, 5vw, 72px) 120px; background: #20201d; color: #f7f3e9; }
 .section-heading { max-width: 650px; margin-bottom: 50px; }
 .section-heading .eyebrow { color: #e7a640; }

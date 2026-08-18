@@ -1,4 +1,10 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
+import { createShareImage, shareImageFileName } from "../features/share/createShareImage";
+import { downloadImage } from "../features/share/downloadImage";
+import { canUseKakaoShare, shareWithKakao } from "../features/share/kakaoShare";
+import { nativeShareImage } from "../features/share/nativeShare";
+import { trackShare } from "../lib/api";
 import type { ResultViewModel } from "../shared/result";
 import { CharacterCard } from "./CharacterCard";
 
@@ -11,18 +17,69 @@ const ELEMENT_LABEL = {
 } as const;
 
 export function ResultView({ result }: { result: ResultViewModel }) {
+  const [shareStatus, setShareStatus] = useState("");
+  const [isSharing, setIsSharing] = useState(false);
+
+  async function makeShareFile(): Promise<{ blob: Blob; file: File }> {
+    const blob = await createShareImage(result);
+    const file = new File([blob], shareImageFileName(result), { type: "image/png" });
+    return { blob, file };
+  }
+
+  async function recordShare() {
+    await trackShare(result.resultId).catch(() => undefined);
+  }
+
+  async function saveImage() {
+    setIsSharing(true);
+    setShareStatus("공유 이미지를 만드는 중…");
+    try {
+      const { blob } = await makeShareFile();
+      downloadImage(blob, shareImageFileName(result));
+      await recordShare();
+      setShareStatus("1080×1350 PNG 이미지를 저장했습니다.");
+    } catch (caught) {
+      setShareStatus(caught instanceof Error ? caught.message : "이미지를 만들지 못했습니다.");
+    } finally {
+      setIsSharing(false);
+    }
+  }
+
   async function shareResult() {
-    const shareData = {
-      title: `${result.ganjiKr}일주 캐릭터`,
-      text: `나는 ${result.ganjiKr}일주, 대표 동물은 ${result.archetype.animal}입니다.`,
+    setIsSharing(true);
+    setShareStatus("공유 이미지를 만드는 중…");
+    try {
+      const { blob, file } = await makeShareFile();
+      const text = `나는 ${result.ganjiKr}일주, 대표 동물은 ${result.archetype.animal}입니다.`;
+      const shared = await nativeShareImage(file, window.location.href, text);
+      if (!shared) {
+        downloadImage(blob, file.name);
+        setShareStatus("공유 기능이 지원되지 않아 PNG를 저장했습니다.");
+      } else {
+        setShareStatus("공유 화면을 열었습니다.");
+      }
+      await recordShare();
+    } catch (caught) {
+      if (caught instanceof DOMException && caught.name === "AbortError") setShareStatus("");
+      else setShareStatus(caught instanceof Error ? caught.message : "공유하지 못했습니다.");
+    } finally {
+      setIsSharing(false);
+    }
+  }
+
+  async function shareKakao() {
+    const shared = canUseKakaoShare() && shareWithKakao({
+      title: `${result.ganjiKr}일주 · ${result.archetype.animal}`,
+      description: result.archetype.description,
       url: window.location.href,
-    };
-    if (navigator.share) {
-      await navigator.share(shareData).catch(() => undefined);
+    });
+    if (shared) {
+      await recordShare();
+      setShareStatus("카카오톡 공유 화면을 열었습니다.");
       return;
     }
-    await navigator.clipboard.writeText(window.location.href);
-    window.alert("결과 주소를 복사했습니다.");
+    setShareStatus("카카오 앱 키 연결 전이라 기기의 공유 기능을 사용합니다.");
+    await shareResult();
   }
 
   return (
@@ -43,9 +100,13 @@ export function ResultView({ result }: { result: ResultViewModel }) {
         </div>
         <p className="result-description">{result.archetype.description}</p>
         <div className="result-actions">
-          <button className="button primary" type="button" onClick={() => void shareResult()}>결과 공유하기</button>
+          <button className="button primary" disabled={isSharing} type="button" onClick={() => void shareResult()}>공유하기</button>
+          <button className="button secondary" disabled={isSharing} type="button" onClick={() => void saveImage()}>이미지 저장</button>
+          <button className="button secondary" disabled={isSharing} type="button" onClick={() => void shareKakao()}>카카오톡</button>
           <Link className="button secondary" to="/">다시 찾아보기</Link>
         </div>
+        <p className="share-help">Instagram은 이미지를 저장한 뒤 앱에서 선택해 주세요.</p>
+        <p className="share-status" aria-live="polite">{shareStatus}</p>
       </section>
 
       <section className="character-section" aria-labelledby="character-title">
@@ -63,4 +124,3 @@ export function ResultView({ result }: { result: ResultViewModel }) {
     </div>
   );
 }
-
