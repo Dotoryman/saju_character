@@ -33,7 +33,7 @@ export function shareWithKakao(input: KakaoShareInput): boolean {
     content: {
       title: input.title,
       description: input.description,
-      imageUrl: `${window.location.origin}/og-placeholder.png`,
+      imageUrl: `${window.location.origin}/assets/brand/og-preview.jpg`,
       link: { mobileWebUrl: input.url, webUrl: input.url },
     },
     buttons: [{ title: "결과 보기", link: { mobileWebUrl: input.url, webUrl: input.url } }],

@@ -8,14 +8,6 @@ import { trackShare } from "../lib/api";
 import type { ResultViewModel } from "../shared/result";
 import { CharacterCard } from "./CharacterCard";
 
-const ELEMENT_LABEL = {
-  wood: "木",
-  fire: "火",
-  earth: "土",
-  metal: "金",
-  water: "水",
-} as const;
-
 export function ResultView({ result }: { result: ResultViewModel }) {
   const [shareStatus, setShareStatus] = useState("");
   const [isSharing, setIsSharing] = useState(false);
@@ -84,21 +76,18 @@ export function ResultView({ result }: { result: ResultViewModel }) {
 
   return (
     <div className={`result-layout element-${result.element}`}>
-      <section className="result-hero">
-        <div className="result-meta">
-          <span>{result.user.displayNickname}</span>
-          <span>{result.user.displayBirthDate}</span>
+      <section className="result-summary" aria-label="일주 결과 요약">
+        <div className="result-summary-card">
+          <div className="summary-item">
+            <span>나의 일주</span>
+            <strong>{result.ganjiKr}일주</strong>
+          </div>
+          <div className="summary-divider" aria-hidden="true" />
+          <div className="summary-item">
+            <span>대표 동물</span>
+            <strong>{result.archetype.animal}</strong>
+          </div>
         </div>
-        <div className="ganji-watermark" aria-hidden="true">{result.ganji}</div>
-        <p className="eyebrow">YOUR DAY PILLAR</p>
-        <h1>당신은 <em>{result.ganjiKr}일주</em>입니다.</h1>
-        <div className="element-chip">{ELEMENT_LABEL[result.element]}의 기운</div>
-        <p className="archetype-name">{result.archetype.name}</p>
-        <div className="animal-block">
-          <span>대표 동물</span>
-          <strong>{result.archetype.animal}</strong>
-        </div>
-        <p className="result-description">{result.archetype.description}</p>
       </section>
 
       <section className="character-section" aria-labelledby="character-title">

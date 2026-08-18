@@ -42,8 +42,45 @@ async function canvasToBlob(canvas: HTMLCanvasElement): Promise<Blob> {
   });
 }
 
+async function loadImage(source?: string): Promise<HTMLImageElement | null> {
+  if (!source) return null;
+
+  return new Promise((resolve) => {
+    const image = new Image();
+    image.crossOrigin = "anonymous";
+    image.decoding = "async";
+    image.onload = () => resolve(image);
+    image.onerror = () => resolve(null);
+    image.src = source;
+  });
+}
+
+function drawCoverImage(
+  context: CanvasRenderingContext2D,
+  image: HTMLImageElement,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  radius: number,
+) {
+  const scale = Math.max(width / image.naturalWidth, height / image.naturalHeight);
+  const sourceWidth = width / scale;
+  const sourceHeight = height / scale;
+  const sourceX = (image.naturalWidth - sourceWidth) / 2;
+  const sourceY = Math.max(0, (image.naturalHeight - sourceHeight) * 0.18);
+
+  context.save();
+  context.beginPath();
+  context.roundRect(x, y, width, height, radius);
+  context.clip();
+  context.drawImage(image, sourceX, sourceY, sourceWidth, sourceHeight, x, y, width, height);
+  context.restore();
+}
+
 export async function createShareImage(result: ResultViewModel): Promise<Blob> {
   await document.fonts?.ready;
+  const characterImages = await Promise.all(result.characters.map((character) => loadImage(character.imageKey)));
 
   const canvas = document.createElement("canvas");
   canvas.width = WIDTH;
@@ -76,37 +113,54 @@ export async function createShareImage(result: ResultViewModel): Promise<Blob> {
   drawCenteredText(context, "MY DAY PILLAR · SAJUSAJU", 90);
 
   context.fillStyle = ink;
-  context.font = '400 190px "Gowun Batang", "Noto Serif KR", serif';
-  drawCenteredText(context, result.ganji, 245);
+  context.font = '400 150px "Gowun Batang", "Noto Serif KR", serif';
+  drawCenteredText(context, result.ganji, 220);
 
-  context.font = '700 46px "Noto Sans KR", sans-serif';
-  drawCenteredText(context, `${result.ganjiKr}일주`, 380);
-
-  context.fillStyle = muted;
-  context.font = '500 26px "Noto Sans KR", sans-serif';
-  drawCenteredText(context, result.archetype.name, 445, 880);
+  context.font = '700 44px "Noto Sans KR", sans-serif';
+  drawCenteredText(context, `${result.ganjiKr}일주`, 335);
 
   context.fillStyle = accent;
-  context.font = '800 66px "Noto Sans KR", sans-serif';
-  drawCenteredText(context, result.archetype.animal, 535, 880);
+  context.font = '800 60px "Noto Sans KR", sans-serif';
+  drawCenteredText(context, result.archetype.animal, 420, 880);
 
-  const cardX = 90;
-  const cardWidth = 900;
-  const cardHeight = 122;
-  const firstCardY = 650;
+  const gridX = 70;
+  const gridY = 510;
+  const cardWidth = 460;
+  const cardHeight = 310;
+  const cardGap = 20;
+  const portraitWidth = 150;
+  const portraitHeight = 270;
 
   result.characters.forEach((character, index) => {
-    const y = firstCardY + index * 145;
+    const column = index % 2;
+    const row = Math.floor(index / 2);
+    const x = gridX + column * (cardWidth + cardGap);
+    const y = gridY + row * (cardHeight + cardGap);
     context.fillStyle = "rgba(255,255,255,0.78)";
-    drawRoundedRect(context, cardX, y, cardWidth, cardHeight, 28);
+    drawRoundedRect(context, x, y, cardWidth, cardHeight, 28);
+
+    const image = characterImages[index];
+    if (image) {
+      drawCoverImage(context, image, x + 20, y + 20, portraitWidth, portraitHeight, 20);
+    } else {
+      context.fillStyle = "rgba(23,23,21,0.08)";
+      drawRoundedRect(context, x + 20, y + 20, portraitWidth, portraitHeight, 20);
+      context.textAlign = "center";
+      context.fillStyle = accent;
+      context.font = '400 58px "Gowun Batang", "Noto Serif KR", serif';
+      context.fillText(character.characterName.slice(0, 1), x + 95, y + 155);
+    }
 
     context.textAlign = "left";
     context.fillStyle = accent;
-    context.font = '800 20px Inter, "Noto Sans KR", sans-serif';
-    context.fillText(character.themeName, cardX + 34, y + 39);
+    context.font = '800 17px Inter, "Noto Sans KR", sans-serif';
+    context.fillText(character.themeName, x + 192, y + 86, 235);
     context.fillStyle = ink;
-    context.font = '800 34px "Noto Sans KR", sans-serif';
-    context.fillText(character.characterName, cardX + 34, y + 83, cardWidth - 68);
+    context.font = '800 32px "Noto Sans KR", sans-serif';
+    context.fillText(character.characterName, x + 192, y + 132, 235);
+    context.fillStyle = muted;
+    context.font = '600 19px "Noto Sans KR", sans-serif';
+    context.fillText(character.tagline, x + 192, y + 180, 235);
   });
 
   context.textAlign = "center";

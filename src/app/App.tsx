@@ -8,12 +8,12 @@ export function App() {
   return (
     <div className="site-shell">
       <header className="site-header">
-        <Link className="brand" to="/" aria-label="일주 캐릭터 찾기 홈">
+        <Link className="brand" to="/" aria-label="메인으로 가기">
           <span className="brand-mark">日</span>
-          <span>사주사주</span>
+          <span>메인으로 가기</span>
         </Link>
         <nav aria-label="주요 메뉴">
-          <NavLink to="/explore">둘러보기</NavLink>
+          <NavLink to="/explore">다른 사주 둘러보기</NavLink>
           <NavLink to="/about">소개</NavLink>
         </nav>
       </header>

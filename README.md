@@ -100,6 +100,9 @@ GitHub 연동 배포를 사용할 경우 저장소 `saju_character`의 `main` �
 - 공개 결과 고유 URL
 - 반응형 생년월일 선택 UI와 캐릭터 중심 결과 카드
 - 원본 해상도 이내로 표시하는 캐릭터 이미지 품질 보호
+- 일주와 대표 동물만 보여주는 간결한 결과 요약 배너
+- 캐릭터 초상이 포함된 1080×1350 결과 PNG 저장
+- Open Graph·카카오 링크 미리보기 이미지와 캐릭터 파비콘
 - 공개 응답 단계의 닉네임·생년월일 masking
 - cursor 기반 Explore 피드
 - 모바일 Web Share 및 URL 복사 fallback

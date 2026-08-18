@@ -58,16 +58,13 @@ export function HomePage() {
   return (
     <div className="home-page">
       <section className="home-hero">
-        <div className="hero-orbit orbit-one">甲</div>
-        <div className="hero-orbit orbit-two">子</div>
         <p className="eyebrow">60 ARCHETYPES · 4 WORLDS</p>
-        <h1>나는 어떤<br /><em>캐릭터일까?</em></h1>
+        <h1>사주로 <em>캐릭터찾기</em></h1>
         <p className="hero-lede">생년월일 하나로 찾아보는 나의 일주와 대표 동물, 그리고 네 세계의 닮은 캐릭터.</p>
 
         <form className="discovery-form" onSubmit={(event) => void handleSubmit(event)}>
           <div className="form-heading">
-            <span className="form-step">01</span>
-            <div><strong>나의 기본 정보</strong><small>두 가지만 알려주세요</small></div>
+            <strong>생년월일을 알려주세요</strong>
           </div>
           <div className="form-fields">
             <label className="nickname-field">
