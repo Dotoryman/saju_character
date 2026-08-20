@@ -38,3 +38,12 @@ export async function trackShare(publicId: string): Promise<void> {
   const response = await fetch(`/api/results/${encodeURIComponent(publicId)}/share`, { method: "POST" });
   if (!response.ok) throw new Error("공유 횟수를 기록하지 못했습니다.");
 }
+
+export async function submitCharacterChangeRequest(input: { resultUrl: string; requestText: string }): Promise<{ ok: true; requestId: string }> {
+  const response = await fetch("/api/character-change-requests", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(input),
+  });
+  return readJson<{ ok: true; requestId: string }>(response);
+}

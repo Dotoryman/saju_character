@@ -165,12 +165,26 @@ main { flex: 1; }
 .about-rule { padding: 26px 0; display: grid; grid-template-columns: 180px 1fr; gap: 30px; border-top: 1px solid var(--line); }
 .about-rule:last-child { border-bottom: 1px solid var(--line); }
 .about-rule span { color: var(--muted); }
-.about-credits { min-height: 62vh; display: grid; place-items: center; }
-.about-credits dl { width: min(100%, 520px); margin: 0; padding: 12px 34px; border: 1px solid var(--line); border-radius: 26px; background: rgba(255,255,255,.52); box-shadow: 0 20px 55px rgba(43,35,25,.07); }
-.about-credits dl div { padding: 25px 0; display: flex; align-items: center; justify-content: space-between; gap: 30px; border-bottom: 1px solid var(--line); }
-.about-credits dl div:last-child { border-bottom: 0; }
-.about-credits dt { color: var(--muted); font-size: 13px; font-weight: 700; }
-.about-credits dd { margin: 0; font-family: "Gowun Batang", serif; font-size: 25px; font-weight: 700; }
+.request-page { min-height: 68vh; display: grid; place-items: center; }
+.request-card { width: min(100%, 680px); padding: clamp(36px, 7vw, 70px); text-align: center; border: 1px solid var(--line); border-radius: 30px; background: radial-gradient(circle at 50% 0, rgba(232,82,60,.1), transparent 42%), rgba(255,255,255,.56); box-shadow: 0 24px 70px rgba(43,35,25,.08); }
+.request-card h1 { margin: 16px 0 34px; font-family: "Gowun Batang", serif; font-size: clamp(30px, 4.5vw, 40px); line-height: 1.4; font-weight: 400; letter-spacing: -.055em; }
+.request-card h1 em { color: var(--accent); font-style: normal; }
+.request-modal-backdrop { position: fixed; z-index: 100; inset: 0; padding: 20px; display: grid; place-items: center; background: rgba(23,23,21,.55); backdrop-filter: blur(9px); }
+.request-modal { width: min(100%, 560px); max-height: calc(100vh - 40px); padding: 34px; position: relative; overflow-y: auto; border: 1px solid rgba(255,255,255,.8); border-radius: 28px; background: var(--paper); box-shadow: 0 30px 90px rgba(0,0,0,.25); }
+.request-modal .eyebrow { margin: 0; color: var(--accent); }
+.request-modal h2 { margin: 10px 0 8px; font-family: "Gowun Batang", serif; font-size: 36px; font-weight: 400; letter-spacing: -.05em; }
+.request-modal-description { margin: 0 0 24px; color: var(--muted); font-size: 13px; }
+.request-modal-close { width: 36px; height: 36px; position: absolute; top: 20px; right: 20px; border: 0; border-radius: 50%; background: rgba(23,23,21,.07); cursor: pointer; font-size: 24px; }
+.request-modal form { display: grid; gap: 16px; }
+.request-modal label { display: grid; gap: 7px; }
+.request-modal label > span { color: var(--muted); font-size: 11px; font-weight: 800; }
+.request-modal label small { font-weight: 500; }
+.request-modal input, .request-modal textarea { width: 100%; border: 1px solid var(--line); border-radius: 14px; outline: 0; background: rgba(255,255,255,.72); color: var(--ink); font: inherit; }
+.request-modal input { height: 48px; padding: 0 14px; }
+.request-modal textarea { min-height: 150px; padding: 14px; resize: vertical; line-height: 1.65; }
+.request-modal input:focus, .request-modal textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(232,82,60,.09); }
+.request-modal-actions { display: grid; grid-template-columns: 1fr 1.4fr; gap: 10px; margin-top: 4px; }
+.request-modal-status { min-height: 20px; margin: 0; color: var(--accent); font-size: 12px; font-weight: 700; text-align: center; }
 
 @media (max-width: 900px) {
   .form-fields { grid-template-columns: 1fr; }
@@ -216,6 +230,11 @@ main { flex: 1; }
   .feed-ganji { font-size: 60px; }
   .feed-character-image { height: 168px; border-radius: 15px; }
   .about-rule { grid-template-columns: 1fr; gap: 8px; }
+  .request-page { padding: 60px 0 90px; }
+  .request-card { padding: 38px 20px; border-radius: 24px; }
+  .request-card h1 { font-size: 29px; }
+  .request-modal { padding: 28px 18px 22px; border-radius: 23px; }
+  .request-modal h2 { font-size: 31px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

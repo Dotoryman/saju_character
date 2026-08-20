@@ -105,6 +105,7 @@ GitHub 연동 배포를 사용할 경우 저장소 `saju_character`의 `main` �
 - Open Graph·카카오 링크 미리보기 이미지와 캐릭터 파비콘
 - 오행별 색상과 대표 캐릭터 이미지가 표시되는 둘러보기 카드
 - 공개 응답 단계의 닉네임·생년월일 masking
+- 캐릭터 수정 요청 모달과 D1 기반 관리자 확인용 요청 저장
 - cursor 기반 Explore 피드
 - 모바일 Web Share 및 URL 복사 fallback
 - 1080×1350 공유 PNG 생성 및 다운로드 fallback

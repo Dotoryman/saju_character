@@ -11,6 +11,11 @@ const createResultSchema = z.object({
   birthDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "올바른 생년월일을 입력해 주세요."),
 });
 
+const createChangeRequestSchema = z.object({
+  resultUrl: z.string().trim().max(500, "결과 주소가 너무 깁니다.").optional().default(""),
+  requestText: z.string().trim().min(5, "수정 요청 내용을 5자 이상 입력해 주세요.").max(1000, "수정 요청은 1000자 이하로 입력해 주세요."),
+});
+
 interface ResultRow {
   public_id: string;
   nickname: string;
@@ -125,6 +130,29 @@ async function createResult(request: Request, env: Env): Promise<Response> {
   );
 }
 
+async function createCharacterChangeRequest(request: Request, env: Env): Promise<Response> {
+  const body: unknown = await request.json().catch(() => null);
+  const parsed = createChangeRequestSchema.safeParse(body);
+  if (!parsed.success) {
+    return json({ error: parsed.error.issues[0]?.message ?? "입력값을 확인해 주세요." }, { status: 400 });
+  }
+
+  if (parsed.data.resultUrl && !/^https?:\/\//i.test(parsed.data.resultUrl)) {
+    return json({ error: "결과 주소는 http:// 또는 https://로 시작해야 합니다." }, { status: 400 });
+  }
+
+  const requestId = crypto.randomUUID().replaceAll("-", "").slice(0, 16);
+  const createdAt = new Date().toISOString();
+  await env.DB.prepare(
+    `INSERT INTO character_change_requests (request_id, result_url, request_text, status, created_at, updated_at)
+     VALUES (?, ?, ?, 'pending', ?, ?)`,
+  )
+    .bind(requestId, parsed.data.resultUrl || null, parsed.data.requestText, createdAt, createdAt)
+    .run();
+
+  return json({ ok: true, requestId }, { status: 201 });
+}
+
 async function getResult(publicId: string, env: Env): Promise<Response> {
   const row = await env.DB.prepare(
     `SELECT public_id, nickname, birth_date, cycle_index, created_at
@@ -175,6 +203,9 @@ async function route(request: Request, env: Env): Promise<Response> {
   }
   if (pathname === "/api/results" && request.method === "POST") {
     return createResult(request, env);
+  }
+  if (pathname === "/api/character-change-requests" && request.method === "POST") {
+    return createCharacterChangeRequest(request, env);
   }
   if (pathname === "/api/feed" && request.method === "GET") {
     return getFeed(url, env);
