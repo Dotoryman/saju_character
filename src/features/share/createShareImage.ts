@@ -42,6 +42,30 @@ async function canvasToBlob(canvas: HTMLCanvasElement): Promise<Blob> {
   });
 }
 
+function drawWrappedCenteredText(
+  context: CanvasRenderingContext2D,
+  text: string,
+  y: number,
+  maxWidth: number,
+  lineHeight: number,
+  maxLines: number,
+) {
+  const words = text.trim().split(/\s+/);
+  const lines: string[] = [];
+  let line = "";
+  for (const word of words) {
+    const candidate = line ? `${line} ${word}` : word;
+    if (context.measureText(candidate).width <= maxWidth || !line) line = candidate;
+    else {
+      lines.push(line);
+      line = word;
+      if (lines.length === maxLines - 1) break;
+    }
+  }
+  if (line && lines.length < maxLines) lines.push(line);
+  lines.forEach((value, index) => drawCenteredText(context, value, y + index * lineHeight, maxWidth));
+}
+
 async function loadImage(source?: string): Promise<HTMLImageElement | null> {
   if (!source) return null;
 
@@ -110,7 +134,7 @@ export async function createShareImage(result: ResultViewModel): Promise<Blob> {
   context.textBaseline = "middle";
   context.fillStyle = accent;
   context.font = '800 25px Inter, "Noto Sans KR", sans-serif';
-  drawCenteredText(context, "MY DAY PILLAR · SAJUSAJU", 64);
+  drawCenteredText(context, "SAJUSAJU · MY CHARACTER", 64);
 
   context.fillStyle = muted;
   context.font = '600 25px "Noto Sans KR", sans-serif';
@@ -127,13 +151,17 @@ export async function createShareImage(result: ResultViewModel): Promise<Blob> {
   context.font = '800 60px "Noto Sans KR", sans-serif';
   drawCenteredText(context, result.archetype.animal, 420, 880);
 
+  context.fillStyle = muted;
+  context.font = '500 19px "Noto Sans KR", sans-serif';
+  drawWrappedCenteredText(context, result.archetype.description, 472, 850, 28, 2);
+
   const gridX = 70;
-  const gridY = 510;
+  const gridY = 545;
   const cardWidth = 460;
-  const cardHeight = 310;
+  const cardHeight = 290;
   const cardGap = 20;
   const portraitWidth = 150;
-  const portraitHeight = 270;
+  const portraitHeight = 250;
 
   result.characters.forEach((character, index) => {
     const column = index % 2;
@@ -152,28 +180,28 @@ export async function createShareImage(result: ResultViewModel): Promise<Blob> {
       context.textAlign = "center";
       context.fillStyle = accent;
       context.font = '400 58px "Gowun Batang", "Noto Serif KR", serif';
-      context.fillText(character.characterName.slice(0, 1), x + 95, y + 155);
+      context.fillText(character.characterName.slice(0, 1), x + 95, y + 145);
     }
 
     context.textAlign = "left";
     context.fillStyle = accent;
     context.font = '800 17px Inter, "Noto Sans KR", sans-serif';
-    context.fillText(character.themeName, x + 192, y + 86, 235);
+    context.fillText(character.themeName, x + 192, y + 78, 235);
     context.fillStyle = ink;
     context.font = '800 32px "Noto Sans KR", sans-serif';
-    context.fillText(character.characterName, x + 192, y + 132, 235);
+    context.fillText(character.characterName, x + 192, y + 124, 235);
     context.fillStyle = muted;
     context.font = '600 19px "Noto Sans KR", sans-serif';
-    context.fillText(character.tagline, x + 192, y + 180, 235);
+    context.fillText(character.tagline, x + 192, y + 172, 235);
   });
 
   context.textAlign = "center";
   context.fillStyle = ink;
   context.font = '800 28px Inter, "Noto Sans KR", sans-serif';
-  drawCenteredText(context, "SAJUSAJU.CLOUD", 1278);
+  drawCenteredText(context, "내 캐릭터 찾기 · SAJUSAJU.CLOUD", 1278);
   context.fillStyle = muted;
   context.font = '500 18px "Noto Sans KR", sans-serif';
-  drawCenteredText(context, "운세가 아닌, 일주의 이미지를 발견하는 곳", 1318);
+  drawCenteredText(context, `${result.ganjiKr}일주 · ${result.archetype.name}`, 1318);
 
   return canvasToBlob(canvas);
 }

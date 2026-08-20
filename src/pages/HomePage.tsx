@@ -58,13 +58,13 @@ export function HomePage() {
   return (
     <div className="home-page">
       <section className="home-hero">
-        <p className="eyebrow">60 ARCHETYPES · 4 WORLDS</p>
-        <h1>사주로 <em>캐릭터찾기</em></h1>
-        <p className="hero-lede">생년월일 하나로 찾아보는 나의 일주와 대표 동물, 그리고 네 세계의 닮은 캐릭터.</p>
+        <p className="eyebrow">SAJUSAJU · 60 DAY PILLARS</p>
+        <h1>생일로 발견하는<br /><em>나의 캐릭터</em></h1>
+        <p className="hero-lede">나의 일주가 가진 분위기를 대표 동물과 네 작품 속 캐릭터로 만나보세요.</p>
 
         <form className="discovery-form" onSubmit={(event) => void handleSubmit(event)}>
           <div className="form-heading">
-            <strong>생년월일을 알려주세요</strong>
+            <strong>생년월일을 알려주세요</strong><small>양력 기준 · 출생시간 불필요</small>
           </div>
           <div className="form-fields">
             <label className="nickname-field">
@@ -80,7 +80,7 @@ export function HomePage() {
               />
             </label>
             <fieldset className="birth-fieldset">
-              <legend><span>생년월일</span><small>양력 기준</small></legend>
+              <legend><span>생년월일</span></legend>
               <label className="select-field">
                 <span>연도</span>
                 <select name="birthYear" onChange={(event) => changeYear(event.target.value)} required value={birthYear}>
@@ -110,7 +110,7 @@ export function HomePage() {
             {!isLoading && <span aria-hidden="true">→</span>}
           </button>
         </form>
-        <p className="privacy-note">성별과 출생시간은 필요하지 않아요. 공개 결과에는 생일 전체가 표시되지 않습니다.</p>
+        <p className="privacy-note">입력한 정보는 결과 생성에만 사용하며, 공개 화면에서는 안전하게 가려집니다.</p>
       </section>
 
       <section className="how-it-works" aria-label="이용 방법">

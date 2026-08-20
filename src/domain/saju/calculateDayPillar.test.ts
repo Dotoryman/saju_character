@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { Solar } from "lunar-javascript";
 import { calculateDayPillar, parseCalendarDate } from "./calculateDayPillar";
 
 describe("calculateDayPillar", () => {
@@ -26,5 +27,39 @@ describe("calculateDayPillar", () => {
 
   it("rejects impossible calendar dates", () => {
     expect(() => parseCalendarDate("2025-02-29")).toThrow();
+  });
+
+  it("matches an independent calendar implementation across 144 dates", () => {
+    const years = Array.from({ length: 12 }, (_, index) => 1900 + index * 18);
+
+    for (const year of years) {
+      for (let month = 1; month <= 12; month += 1) {
+        const day = Math.min(3 + month * 2, new Date(Date.UTC(year, month, 0)).getUTCDate());
+        const date = `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+        const expected = Solar.fromYmd(year, month, day).getLunar().getDayInGanZhi();
+        expect(calculateDayPillar(date).dayPillar, date).toBe(expected);
+      }
+    }
+  });
+
+  it.each([
+    "1900-01-01",
+    "1999-12-31",
+    "2000-01-01",
+    "2000-02-28",
+    "2000-02-29",
+    "2000-03-01",
+    "2024-02-28",
+    "2024-02-29",
+    "2024-03-01",
+    "2025-12-31",
+    "2026-01-01",
+    "2099-12-31",
+    "2100-01-01",
+  ])("matches the independent calendar at boundary date %s", (date) => {
+    const { year, month, day } = parseCalendarDate(date);
+    expect(calculateDayPillar(date).dayPillar).toBe(
+      Solar.fromYmd(year, month, day).getLunar().getDayInGanZhi(),
+    );
   });
 });

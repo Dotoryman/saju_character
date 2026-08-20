@@ -41,7 +41,12 @@ async function getCharacterImage(pathname: string, env: Env): Promise<Response> 
   const sourceUrl = CHARACTER_IMAGE_SOURCES[mappingKey];
   if (!sourceUrl) return new Response("Not found", { status: 404 });
 
-  const objectKey = `characters/${theme}/${characterName}.jpg`;
+  // The public label changed to 투아왕 in v0.4.0. Reuse the already-populated
+  // R2 object rather than fetching and storing an identical second copy.
+  const cachedCharacterName = theme === "inuyasha" && characterName === "투아왕"
+    ? "이누노타이쇼"
+    : characterName;
+  const objectKey = `characters/${theme}/${cachedCharacterName}.jpg`;
   const cached = await env.ASSETS_BUCKET.get(objectKey);
   if (cached) {
     const headers = new Headers();
@@ -80,7 +85,7 @@ function toViewModel(row: ResultRow): ResultViewModel {
       animal: archetype.animalName,
       description: archetype.description,
     },
-    characters: getCharacterResults(row.cycle_index, archetype.animalName),
+    characters: getCharacterResults(row.cycle_index),
     user: {
       displayNickname: maskNickname(row.nickname),
       displayBirthDate: maskBirthDate(row.birth_date),
@@ -169,6 +174,41 @@ async function getResult(publicId: string, env: Env): Promise<Response> {
   return json(toViewModel(row));
 }
 
+async function getResultPage(request: Request, publicId: string, env: Env): Promise<Response> {
+  const row = await env.DB.prepare(
+    `SELECT public_id, nickname, birth_date, cycle_index, created_at
+     FROM results WHERE public_id = ? AND is_public = 1 LIMIT 1`,
+  )
+    .bind(publicId)
+    .first<ResultRow>();
+
+  const assetRequest = new Request(new URL("/", request.url), request);
+  const page = await env.ASSETS.fetch(assetRequest);
+  if (!row || !page.ok) return page;
+
+  const result = toViewModel(row);
+  const title = `${result.ganjiKr}일주 · ${result.archetype.animal} | SAJUSAJU`;
+  const description = `${result.archetype.name}. 네 작품 속 닮은 캐릭터를 확인해 보세요.`;
+  const image = new URL(result.characters[0]?.imageKey ?? "/assets/brand/og-preview.jpg", request.url).href;
+  const canonicalUrl = new URL(request.url).href;
+
+  const rewriter = new HTMLRewriter()
+    .on("title", { element(element) { element.setInnerContent(title); } })
+    .on('meta[name="description"]', { element(element) { element.setAttribute("content", description); } })
+    .on('meta[property="og:title"]', { element(element) { element.setAttribute("content", title); } })
+    .on('meta[property="og:description"]', { element(element) { element.setAttribute("content", description); } })
+    .on('meta[property="og:url"]', { element(element) { element.setAttribute("content", canonicalUrl); } })
+    .on('meta[property="og:image"]', { element(element) { element.setAttribute("content", image); } })
+    .on('meta[property="og:image:alt"]', { element(element) { element.setAttribute("content", `${result.ganjiKr}일주 대표 캐릭터`); } })
+    .on('meta[name="twitter:title"]', { element(element) { element.setAttribute("content", title); } })
+    .on('meta[name="twitter:description"]', { element(element) { element.setAttribute("content", description); } })
+    .on('meta[name="twitter:image"]', { element(element) { element.setAttribute("content", image); } });
+
+  const headers = new Headers(page.headers);
+  headers.set("cache-control", "public, max-age=300");
+  return rewriter.transform(new Response(page.body, { status: page.status, headers }));
+}
+
 async function getFeed(url: URL, env: Env): Promise<Response> {
   const limit = Math.min(Math.max(Number(url.searchParams.get("limit")) || 12, 1), 20);
   const cursor = url.searchParams.get("cursor");
@@ -196,6 +236,11 @@ async function route(request: Request, env: Env): Promise<Response> {
 
   if (pathname.startsWith("/media/characters/") && request.method === "GET") {
     return getCharacterImage(pathname, env);
+  }
+
+  const resultPageMatch = /^\/result\/([A-Za-z0-9]+)$/.exec(pathname);
+  if (resultPageMatch?.[1] && request.method === "GET") {
+    return getResultPage(request, resultPageMatch[1], env);
   }
 
   if (pathname === "/api/health" && request.method === "GET") {

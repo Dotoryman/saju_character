@@ -12,5 +12,5 @@
     "noEmit": true,
     "noUncheckedIndexedAccess": true
   },
-  "include": ["worker", "src/domain", "src/data", "src/shared", "worker-configuration.d.ts"]
+  "include": ["worker", "src/domain", "src/data", "src/shared", "src/types", "worker-configuration.d.ts"]
 }

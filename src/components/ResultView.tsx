@@ -11,6 +11,7 @@ import { CharacterCard } from "./CharacterCard";
 export function ResultView({ result }: { result: ResultViewModel }) {
   const [shareStatus, setShareStatus] = useState("");
   const [isSharing, setIsSharing] = useState(false);
+  const representativeCharacter = result.characters[0];
 
   async function makeShareFile(): Promise<{ blob: Blob; file: File }> {
     const blob = await createShareImage(result);
@@ -62,7 +63,7 @@ export function ResultView({ result }: { result: ResultViewModel }) {
   async function shareKakao() {
     const shared = canUseKakaoShare() && shareWithKakao({
       title: `${result.ganjiKr}일주 · ${result.archetype.animal}`,
-      description: result.archetype.description,
+      description: `${result.archetype.name}\n${result.archetype.description.trim()}`,
       url: window.location.href,
     });
     if (shared) {
@@ -76,25 +77,40 @@ export function ResultView({ result }: { result: ResultViewModel }) {
 
   return (
     <div className={`result-layout element-${result.element}`}>
-      <section className="result-summary" aria-label="일주 결과 요약">
-        <div className="result-summary-card">
-          <div className="summary-item">
-            <span>나의 일주</span>
-            <strong>{result.ganjiKr}일주</strong>
+      <section className="result-hero" aria-labelledby="result-title">
+        <div className="result-hero-inner">
+          <div className="result-hero-copy">
+            <p className="eyebrow">YOUR DAY PILLAR</p>
+            <p className="result-owner">{result.user.displayNickname} 님의 일주</p>
+            <h1 id="result-title"><span>{result.ganji}</span>{result.ganjiKr}일주</h1>
+            <div className="result-identity">
+              <span>대표 동물</span>
+              <strong>{result.archetype.animal}</strong>
+              <i aria-hidden="true" />
+              <span>일주의 이미지</span>
+              <strong>{result.archetype.name}</strong>
+            </div>
+            <p className="archetype-description">{result.archetype.description}</p>
+            <a className="result-scroll-link" href="#characters">닮은 캐릭터 4명 보기 <span aria-hidden="true">↓</span></a>
           </div>
-          <div className="summary-divider" aria-hidden="true" />
-          <div className="summary-item">
-            <span>대표 동물</span>
-            <strong>{result.archetype.animal}</strong>
-          </div>
+          {representativeCharacter && <div className="result-hero-character">
+            <div className="hero-character-frame">
+              <img alt={`${representativeCharacter.characterName} 캐릭터`} src={representativeCharacter.imageKey} />
+              <div>
+                <span>{representativeCharacter.themeName}</span>
+                <strong>{representativeCharacter.characterName}</strong>
+              </div>
+            </div>
+            <p>가장 먼저 만나는 대표 매치</p>
+          </div>}
         </div>
       </section>
 
-      <section className="character-section" aria-labelledby="character-title">
+      <section className="character-section" id="characters" aria-labelledby="character-title">
         <div className="section-heading">
           <p className="eyebrow">FOUR WORLDS, ONE YOU</p>
-          <h2 id="character-title">네 세계의 닮은 캐릭터</h2>
-          <p>공식 생일이 아닌 능력과 분위기, 상징성을 연결한 재미있는 콘텐츠입니다.</p>
+          <h2 id="character-title">그래서, 이런 캐릭터와 닮았어요</h2>
+          <p>일주의 성향과 인물의 태도·능력·분위기를 연결했습니다. 각 캐릭터 아래에서 나와 닮은 이유를 확인해 보세요.</p>
         </div>
         <div className="character-grid">
           {result.characters.map((character, index) => (

@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import { fetchFeed } from "../lib/api";
 import type { ResultViewModel } from "../shared/result";
 
+const FEED_SYMBOLS = { "one-piece": "☠", naruto: "忍", inuyasha: "月", ghibli: "風" } as const;
+
 function pickFeedCharacter(item: ResultViewModel) {
   if (item.characters.length === 0) return undefined;
   const hash = [...item.resultId].reduce((total, character) => ((total * 31) + character.charCodeAt(0)) >>> 0, 0);
@@ -54,7 +56,13 @@ export function ExplorePage() {
                   </div>
                   {character?.imageKey && (
                     <figure className="feed-character-image">
-                      <img alt={`${character.characterName} 캐릭터`} loading="lazy" src={character.imageKey} />
+                      <span aria-hidden="true">{FEED_SYMBOLS[character.theme]}</span>
+                      <img
+                        alt={`${character.characterName} 캐릭터`}
+                        loading="lazy"
+                        onError={(event) => event.currentTarget.closest("figure")?.classList.add("image-unavailable")}
+                        src={character.imageKey}
+                      />
                       <figcaption>{character.characterName}</figcaption>
                     </figure>
                   )}

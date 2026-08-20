@@ -559,6 +559,32 @@
       "Naruto Shippuden the Movie: The Will of Fire"
     ]
   },
+  "naruto|시카마루": {
+    "url": "https://s4.anilist.co/file/anilistcdn/character/large/b2007-QaesJlIZDifj.jpg",
+    "sourceName": "Shikamaru Nara",
+    "sourceId": 2007,
+    "media": [
+      "Naruto",
+      "Naruto the Movie: Legend of the Stone of Gelel",
+      "NARUTO: Narutimate Hero 3: Tsui ni Gekitotsu! Jounin VS Genin!! Musabetsu Dairansen Taikai Kaisai!!",
+      "Naruto: Shippuden",
+      "Hidden Leaf Village Grand Sports Festival",
+      "Naruto Shippuden the Movie"
+    ]
+  },
+  "naruto|마다라": {
+    "url": "https://s4.anilist.co/file/anilistcdn/character/large/b53901-HnRKSoHMG5Vg.png",
+    "sourceName": "Madara Uchiha",
+    "sourceId": 53901,
+    "media": [
+      "Naruto: Shippuden",
+      "Naruto",
+      "Naruto Secret Chronicles Book Series",
+      "Naruto: Chibi Sasuke's Sharingan Legend",
+      "ROAD TO NINJA: NARUTO THE MOVIE",
+      "ROAD OF NARUTO"
+    ]
+  },
   "inuyasha|고신키": {
     "url": "https://s4.anilist.co/file/anilistcdn/character/large/b1370-6IDvqoGqWFUM.jpg",
     "sourceName": "Goshinki",
@@ -704,6 +730,90 @@
       "InuYasha the Movie 2: The Castle Beyond the Looking Glass",
       "InuYasha the Movie: Affections Touching Across Time",
       "InuYasha: The Final Act",
+      "InuYasha"
+    ]
+  },
+  "inuyasha|지넨지": {
+    "url": "https://s4.anilist.co/file/anilistcdn/character/large/64651.jpg",
+    "sourceName": "Jinenji",
+    "sourceId": 64651,
+    "media": [
+      "InuYasha"
+    ]
+  },
+  "inuyasha|반코츠": {
+    "url": "https://s4.anilist.co/file/anilistcdn/character/large/1899.jpg",
+    "sourceName": "Bankotsu",
+    "sourceId": 1899,
+    "media": [
+      "InuYasha",
+      "InuYasha"
+    ]
+  },
+  "inuyasha|하쿠도시": {
+    "url": "https://s4.anilist.co/file/anilistcdn/character/large/10801.jpg",
+    "sourceName": "Hakudoushi",
+    "sourceId": 10801,
+    "media": [
+      "InuYasha",
+      "InuYasha: The Final Act",
+      "InuYasha"
+    ]
+  },
+  "inuyasha|코하쿠": {
+    "url": "https://s4.anilist.co/file/anilistcdn/character/large/b1366-Fac3MafjvAaJ.jpg",
+    "sourceName": "Kohaku",
+    "sourceId": 1366,
+    "media": [
+      "InuYasha",
+      "InuYasha the Movie 2: The Castle Beyond the Looking Glass",
+      "InuYasha: The Final Act",
+      "InuYasha",
+      "Inuyasha Special",
+      "Yashahime: Princess Half-Demon"
+    ]
+  },
+  "inuyasha|토토사이": {
+    "url": "https://s4.anilist.co/file/anilistcdn/character/large/1362.jpg",
+    "sourceName": "Totosai",
+    "sourceId": 1362,
+    "media": [
+      "InuYasha",
+      "InuYasha the Movie 3: Swords of an Honorable Ruler",
+      "InuYasha: The Final Act",
+      "InuYasha",
+      "Yashahime: Princess Half-Demon",
+      "Yashahime: Princess Half-Demon - The Second Act"
+    ]
+  },
+  "inuyasha|쟈켄": {
+    "url": "https://s4.anilist.co/file/anilistcdn/character/large/b1364-4Y3v1IMEAwIg.jpg",
+    "sourceName": "Jaken",
+    "sourceId": 1364,
+    "media": [
+      "InuYasha",
+      "InuYasha the Movie 4: Fire on the Mystic Island",
+      "InuYasha the Movie 3: Swords of an Honorable Ruler",
+      "InuYasha the Movie: Affections Touching Across Time",
+      "InuYasha: The Final Act",
+      "InuYasha"
+    ]
+  },
+  "inuyasha|긴코츠": {
+    "url": "https://s4.anilist.co/file/anilistcdn/character/large/34395-l4GGLNzP0zP6.png",
+    "sourceName": "Ginkotsu",
+    "sourceId": 34395,
+    "media": [
+      "InuYasha",
+      "InuYasha"
+    ]
+  },
+  "inuyasha|유라": {
+    "url": "https://s4.anilist.co/file/anilistcdn/character/large/b9022-UuYoelOzlCyU.png",
+    "sourceName": "Yura",
+    "sourceId": 9022,
+    "media": [
+      "InuYasha",
       "InuYasha"
     ]
   },
@@ -1128,6 +1238,99 @@
       "ONE PIECE: STRONG WORLD"
     ]
   },
+  "one-piece|야마토": {
+    "url": "https://s4.anilist.co/file/anilistcdn/character/large/b176840-8KRqXXLJeLOg.png",
+    "sourceName": "Yamato",
+    "sourceId": 176840,
+    "media": [
+      "ONE PIECE",
+      "One Piece",
+      "One Piece: Ace’s Story—The Manga"
+    ]
+  },
+  "one-piece|코즈키 오뎅": {
+    "url": "https://s4.anilist.co/file/anilistcdn/character/large/b149797-UmdR7up3kgoK.png",
+    "sourceName": "Oden Kouzuki",
+    "sourceId": 149797,
+    "media": [
+      "ONE PIECE",
+      "One Piece",
+      "Kinen Satsuei"
+    ]
+  },
+  "one-piece|사보": {
+    "url": "https://s4.anilist.co/file/anilistcdn/character/large/b32893-3weZS61cdwLD.png",
+    "sourceName": "Sabo",
+    "sourceId": 32893,
+    "media": [
+      "ONE PIECE",
+      "One Piece 3D2Y: Overcome Ace’s Death! Luffy’s Vow to his Friends",
+      "One Piece - Episode of Sabo: Bond of Three Brothers - A Miraculous Reunion and an Inherited Will",
+      "One Piece Film: Gold",
+      "One Piece",
+      "One Piece: Stampede"
+    ]
+  },
+  "one-piece|모네": {
+    "url": "https://s4.anilist.co/file/anilistcdn/character/large/b59641-FMwd26cG8rcZ.jpg",
+    "sourceName": "Monet",
+    "sourceId": 59641,
+    "media": [
+      "ONE PIECE",
+      "One Piece",
+      "HUNGRY DAYS: Aoharu ka yo."
+    ]
+  },
+  "one-piece|바솔로뮤 쿠마": {
+    "url": "https://s4.anilist.co/file/anilistcdn/character/large/b7453-c3MArieFBs9w.png",
+    "sourceName": "Kuma Bartholomew",
+    "sourceId": 7453,
+    "media": [
+      "ONE PIECE",
+      "One Piece 3D2Y: Overcome Ace’s Death! Luffy’s Vow to his Friends",
+      "One Piece",
+      "HUNGRY DAYS: Aoharu ka yo.",
+      "ONE PIECE×KAWAISOUNI! Kono Boushi wo Omae ni Azukeru",
+      "ONE PIECE FAN LETTER"
+    ]
+  },
+  "one-piece|골 D. 로저": {
+    "url": "https://s4.anilist.co/file/anilistcdn/character/large/b4883-0t76xH00sehO.png",
+    "sourceName": "Roger Gold",
+    "sourceId": 4883,
+    "media": [
+      "ONE PIECE",
+      "ONE PIECE FILM: STRONG WORLD - EPISODE:0",
+      "One Piece: Episode of Luffy - Hand Island Adventure",
+      "One Piece",
+      "ONE PIECE: STRONG WORLD",
+      "One Piece: Stampede"
+    ]
+  },
+  "one-piece|프랑키": {
+    "url": "https://s4.anilist.co/file/anilistcdn/character/large/n64-ChX6ZzHHjXqA.png",
+    "sourceName": "Franky",
+    "sourceId": 64,
+    "media": [
+      "ONE PIECE",
+      "One Piece: Episode Of Chopper +: The Miracle Winter Cherry Blossom",
+      "One Piece Film: Strong World",
+      "One Piece: Romance Dawn Story",
+      "ONE PIECE FILM: STRONG WORLD - EPISODE:0",
+      "One Piece 3D: Mugiwara Chase"
+    ]
+  },
+  "one-piece|카타쿠리": {
+    "url": "https://s4.anilist.co/file/anilistcdn/character/large/b124077-TODX2ThCdyx2.png",
+    "sourceName": "Katakuri Charlotte",
+    "sourceId": 124077,
+    "media": [
+      "ONE PIECE",
+      "One Piece",
+      "HUNGRY DAYS: Aoharu ka yo.",
+      "One Piece Film: Red"
+    ]
+  },
   "ghibli|가오나시": {
     "url": "https://s4.anilist.co/file/anilistcdn/character/large/b8298-ATUVKng0oyHR.png",
     "sourceName": "Kaonashi",
@@ -1325,16 +1528,6 @@
       "Luo Xiaohei Zhan Ji"
     ]
   },
-  "ghibli|하울의 성": {
-    "url": "https://s4.anilist.co/file/anilistcdn/character/large/b507-g9yz1GTLtPla.jpg",
-    "sourceName": "Howl",
-    "sourceId": 507,
-    "media": [
-      "Howl‘s Moving Castle",
-      "The Legend of Luoxiaohei",
-      "Luo Xiaohei Zhan Ji"
-    ]
-  },
   "ghibli|하쿠": {
     "url": "https://s4.anilist.co/file/anilistcdn/character/large/b385-pKGCy3oYWxRa.png",
     "sourceName": "Haku",
@@ -1342,6 +1535,100 @@
     "media": [
       "Spirited Away"
     ]
+  },
+  "ghibli|지지": {
+    "url": "https://s4.anilist.co/file/anilistcdn/character/large/b3133-pt3Y3TOU3EQr.png",
+    "sourceName": "Jiji",
+    "sourceId": 3133,
+    "media": [
+      "Kiki's Delivery Service",
+      "HUNGRY DAYS: Aoharu ka yo."
+    ]
+  },
+  "ghibli|에보시": {
+    "url": "https://s4.anilist.co/file/anilistcdn/character/large/n4781-m7x213OVOdgm.png",
+    "sourceName": "Eboshi Gozen",
+    "sourceId": 4781,
+    "media": [
+      "Princess Mononoke"
+    ]
+  },
+  "ghibli|가마 할아범": {
+    "url": "https://s4.anilist.co/file/anilistcdn/character/large/b8301-ASa313sbbcI3.png",
+    "sourceName": "Kamajii",
+    "sourceId": 8301,
+    "media": [
+      "Spirited Away"
+    ]
+  },
+  "ghibli|남작": {
+    "url": "https://s4.anilist.co/file/anilistcdn/character/large/4803.jpg",
+    "sourceName": "Humbert von Gikkingen Danshaku",
+    "sourceId": 4803,
+    "media": [
+      "Whisper of the Heart",
+      "The Cat Returns",
+      "Baron: The Cat Returns",
+      "Whisper of the Heart",
+      "City of Dreams",
+      "Mimi wo Sumaseba: Shiawase na Jikan"
+    ]
+  },
+  "ghibli|파즈": {
+    "url": "https://s4.anilist.co/file/anilistcdn/character/large/b8524-GsNaG6GxiZrP.jpg",
+    "sourceName": "Pazu",
+    "sourceId": 8524,
+    "media": [
+      "Castle in the Sky"
+    ]
+  },
+  "ghibli|하루": {
+    "url": "https://s4.anilist.co/file/anilistcdn/character/large/4802.jpg",
+    "sourceName": "Haru Yoshioka",
+    "sourceId": 4802,
+    "media": [
+      "The Cat Returns",
+      "Baron: The Cat Returns"
+    ]
+  },
+  "ghibli|무타": {
+    "url": "https://s4.anilist.co/file/anilistcdn/character/large/b6152-QkvRHtVoPSJt.png",
+    "sourceName": "Muta",
+    "sourceId": 6152,
+    "media": [
+      "Whisper of the Heart",
+      "The Cat Returns",
+      "Mimi wo Sumaseba: Shiawase na Jikan"
+    ]
+  },
+  "ghibli|사츠키": {
+    "url": "https://s4.anilist.co/file/anilistcdn/character/large/267.jpg",
+    "sourceName": "Satsuki Kusakabe",
+    "sourceId": 267,
+    "media": [
+      "My Neighbor Totoro",
+      "Mei and the Baby Cat Bus"
+    ]
+  },
+  "ghibli|카구야 공주": {
+    "url": "https://s4.anilist.co/file/anilistcdn/character/large/89885-ruLmoJQAQPsp.jpg",
+    "sourceName": "Kaguya-hime",
+    "sourceId": 89885,
+    "media": [
+      "The Tale of The Princess Kaguya",
+      "Kaguya-hime (1961)",
+      "Taketori Monogatari",
+      "Kaguya-hime (1972)"
+    ]
+  },
+  "inuyasha|투아왕": {
+    "url": "https://s4.anilist.co/file/anilistcdn/character/large/3167.jpg",
+    "sourceName": "Inu no Taisho",
+    "sourceId": 3167,
+    "media": [
+      "InuYasha the Movie 3: Swords of an Honorable Ruler"
+    ],
+    "verifiedOverride": true
   },
   "naruto|오비토": {
     "url": "https://s4.anilist.co/file/anilistcdn/character/large/b85-mkVBh2yjxjmx.png",
@@ -1384,16 +1671,6 @@
       "It's a Rumic World: 50th Anniversary Weekly★Shonen Sunday"
     ],
     "fallbackFrom": "inuyasha|카고메"
-  },
-  "inuyasha|이누노타이쇼": {
-    "url": "https://s4.anilist.co/file/anilistcdn/character/large/28298.jpg",
-    "sourceName": "Sesshomaru no Haha",
-    "sourceId": 28298,
-    "media": [
-      "InuYasha: The Final Act",
-      "InuYasha"
-    ],
-    "fallbackFrom": "inuyasha|셋쇼마루"
   },
   "inuyasha|카에데": {
     "url": "https://s4.anilist.co/file/anilistcdn/character/large/b1359-AFczK1HRd3ub.png",

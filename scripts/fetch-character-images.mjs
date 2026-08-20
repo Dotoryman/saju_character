@@ -14,13 +14,16 @@ const groups = {
     "쿠레나이": "Kurenai Yuuhi", "키사메": "Kisame Hoshigaki", "킬러 비": "Killer Bee", "테마리": "Temari",
     "텐텐": "Tenten", "토비라마": "Tobirama Senju", "페인": "Pain", "하시라마": "Hashirama Senju",
     "하쿠": "Haku", "한": "Han", "한조": "Hanzou", "히나타": "Hinata Hyuuga",
+    "시카마루": "Shikamaru Nara", "마다라": "Madara Uchiha",
   },
   inuyasha: {
     "고신키": "Goshinki", "나라쿠": "Naraku", "류코츠세이": "Ryukotsusei", "링": "Rin",
     "묘가": "Myoga", "미로쿠": "Miroku", "산고": "Sango", "셋쇼마루": "Sesshomaru",
-    "싯포": "Shippo", "이누노타이쇼": "Touga", "이누야샤": "Inuyasha", "쟈코츠": "Jakotsu",
+    "싯포": "Shippo", "이누야샤": "Inuyasha", "쟈코츠": "Jakotsu",
     "카고메": "Kagome Higurashi", "카구라": "Kagura", "카에데": "Kaede", "칸나": "Kanna",
-    "코우가": "Kouga", "키쿄우": "Kikyo", "호센키": "Housenki",
+    "코우가": "Kouga", "키쿄우": "Kikyo", "호센키": "Housenki", "투아왕": "Touga",
+    "지넨지": "Jinenji", "아야메": "Ayame", "반코츠": "Bankotsu", "하쿠도시": "Hakudoushi",
+    "코하쿠": "Kohaku", "토토사이": "Totosai", "쟈켄": "Jaken", "긴코츠": "Ginkotsu", "유라": "Yura",
   },
   "one-piece": {
     "가프": "Garp", "검은수염": "Marshall D. Teach", "나미": "Nami", "돌턴": "Dalton",
@@ -32,7 +35,9 @@ const groups = {
     "징베": "Jinbe", "쵸파": "Tony Tony Chopper", "카이도": "Kaido", "캐럿": "Carrot",
     "캐번디시": "Cavendish", "코비": "Koby", "코알라": "Koala", "쿠잔": "Kuzan",
     "크로커다일": "Crocodile", "키드": "Eustass Kid", "킹": "King", "타시기": "Tashigi",
-    "흰수염": "Edward Newgate",
+    "흰수염": "Edward Newgate", "야마토": "Yamato", "코즈키 오뎅": "Kozuki Oden",
+    "사보": "Sabo", "모네": "Monet", "바솔로뮤 쿠마": "Bartholomew Kuma",
+    "골 D. 로저": "Roger", "프랑키": "Franky", "카타쿠리": "Charlotte Katakuri",
   },
   ghibli: {
     "가오나시": "No-Face", "나우시카": "Nausicaä", "라퓨타 로봇병": "Robot Soldier", "메이": "Mei Kusakabe",
@@ -41,8 +46,10 @@ const groups = {
     "시타": "Sheeta", "아리에티": "Arrietty", "아시타카": "Ashitaka", "오소노": "Osono",
     "유바바": "Yubaba", "지로": "Jirou Horikoshi", "치히로": "Chihiro Ogino", "캘시퍼": "Calcifer",
     "키키": "Kiki", "토토로": "Totoro", "포뇨": "Ponyo", "포르코": "Porco Rosso",
-    "폰포코 너구리": "Shoukichi", "하울": "Howl", "하울의 성": "Howl",
-    "하쿠": "Haku",
+    "폰포코 너구리": "Shoukichi", "하울": "Howl",
+    "하쿠": "Haku", "지지": "Jiji", "에보시": "Eboshi", "가마 할아범": "Kamaji",
+    "남작": "Baron", "파즈": "Pazu", "하루": "Haru Yoshioka",
+    "무타": "Muta", "사츠키": "Satsuki Kusakabe", "카구야 공주": "Kaguya-hime",
   },
 };
 
@@ -54,7 +61,7 @@ const expectedMedia = {
   naruto: /Naruto|Boruto/i,
   inuyasha: /InuYasha|Hanyou no Yashahime/i,
   "one-piece": /One Piece/i,
-  ghibli: /Mononoke|Spirited Away|Howl|Totoro|Kiki|Ponyo|Nausica|Laputa|Castle in the Sky|Whisper of the Heart|Arrietty|Wind Rises|Porco|Pom Poko/i,
+  ghibli: /Mononoke|Spirited Away|Howl|Totoro|Kiki|Ponyo|Nausica|Laputa|Castle in the Sky|Whisper of the Heart|Arrietty|Wind Rises|Porco|Pom Poko|Cat Returns|Kaguya/i,
 };
 
 const selections = {};
@@ -95,7 +102,6 @@ const fallbacks = {
   "naruto|오비토": "naruto|카카시",
   "naruto|한": "naruto|킬러 비",
   "inuyasha|링": "inuyasha|카고메",
-  "inuyasha|이누노타이쇼": "inuyasha|셋쇼마루",
   "inuyasha|카에데": "inuyasha|키쿄우",
   "inuyasha|칸나": "inuyasha|카구라",
   "inuyasha|코우가": "inuyasha|이누야샤",
@@ -104,6 +110,17 @@ const fallbacks = {
   "one-piece|킹": "one-piece|카이도",
   "ghibli|라퓨타 로봇병": "ghibli|시타",
   "ghibli|쇼우": "ghibli|아리에티",
+};
+
+// AniList text search does not reliably expose this movie-only character.
+// Keep the verified character record explicit so the Korean display-name rename
+// does not break the existing image cache or silently select a different person.
+selections["inuyasha|투아왕"] = {
+  url: "https://s4.anilist.co/file/anilistcdn/character/large/3167.jpg",
+  sourceName: "Inu no Taisho",
+  sourceId: 3167,
+  media: ["InuYasha the Movie 3: Swords of an Honorable Ruler"],
+  verifiedOverride: true,
 };
 for (const [target, source] of Object.entries(fallbacks)) {
   if (!selections[target] && selections[source]) {

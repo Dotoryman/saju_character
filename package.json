@@ -1,12 +1,12 @@
 {
   "name": "saju_character",
-  "version": "0.3.3",
+  "version": "0.4.0",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
-    "typecheck": "tsc -b --pretty false",
+    "build": "npm run cf-typegen && tsc -b && vite build",
+    "typecheck": "npm run cf-typegen && tsc -b --pretty false",
     "test": "vitest run",
     "test:watch": "vitest",
     "cf-typegen": "wrangler types",
@@ -18,17 +18,18 @@
   "dependencies": {
     "@cloudflare/vite-plugin": "latest",
     "@vitejs/plugin-react": "latest",
-    "vite": "latest",
-    "typescript": "latest",
-    "wrangler": "latest",
     "react": "latest",
     "react-dom": "latest",
     "react-router-dom": "latest",
+    "typescript": "latest",
+    "vite": "latest",
+    "wrangler": "latest",
     "zod": "latest"
   },
   "devDependencies": {
     "@types/react": "latest",
     "@types/react-dom": "latest",
+    "lunar-javascript": "^1.7.7",
     "vitest": "latest"
   }
 }
