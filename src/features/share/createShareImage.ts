@@ -196,12 +196,12 @@ export async function createShareImage(result: ResultViewModel): Promise<Blob> {
   });
 
   context.textAlign = "center";
-  context.fillStyle = ink;
-  context.font = '800 28px Inter, "Noto Sans KR", sans-serif';
-  drawCenteredText(context, "내 캐릭터 찾기 · SAJUSAJU.CLOUD", 1278);
-  context.fillStyle = muted;
-  context.font = '500 18px "Noto Sans KR", sans-serif';
-  drawCenteredText(context, `${result.ganjiKr}일주 · ${result.archetype.name}`, 1318);
+  context.save();
+  context.globalAlpha = 0.58;
+  context.fillStyle = accent;
+  context.font = '700 23px Inter, "Noto Sans KR", sans-serif';
+  drawCenteredText(context, "sajusaju.cloud", 1308);
+  context.restore();
 
   return canvasToBlob(canvas);
 }

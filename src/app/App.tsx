@@ -3,9 +3,13 @@ import { AboutPage } from "../pages/AboutPage";
 import { ExplorePage } from "../pages/ExplorePage";
 import { HomePage } from "../pages/HomePage";
 import { ResultPage } from "../pages/ResultPage";
+import { AccountPage } from "../pages/AccountPage";
+import { AdminPage } from "../pages/AdminPage";
+import { useAuth } from "../features/auth/AuthContext";
 import packageInfo from "../../package.json";
 
 export function App() {
+  const { user, loading, openAuth } = useAuth();
   return (
     <div className="site-shell">
       <header className="site-header">
@@ -15,6 +19,7 @@ export function App() {
         </Link>
         <nav aria-label="주요 메뉴">
           <NavLink to="/explore">다른 사주 둘러보기</NavLink>
+          {!loading && (user ? <NavLink to="/account">{user.nickname}</NavLink> : <button className="header-login" type="button" onClick={openAuth}>로그인</button>)}
           <NavLink to="/about">소개</NavLink>
         </nav>
       </header>
@@ -25,19 +30,14 @@ export function App() {
           <Route path="/result/:publicId" element={<ResultPage />} />
           <Route path="/explore" element={<ExplorePage />} />
           <Route path="/about" element={<AboutPage />} />
+          <Route path="/account" element={<AccountPage />} />
+          <Route path="/admin" element={<AdminPage />} />
           <Route path="*" element={<HomePage />} />
         </Routes>
       </main>
 
       <footer className="site-footer">
-        <div className="footer-brand">
-          <strong>SAJUSAJU</strong>
-          <span>생일로 발견하는 나의 캐릭터</span>
-        </div>
-        <div className="footer-meta">
-          <Link to="/about">서비스 소개 · 권리 안내</Link>
-          <span>비공식 팬 콘텐츠 · 버전 v{packageInfo.version} · 만든이 남도령</span>
-        </div>
+        <span>버전 : {packageInfo.version} · 만든이 : 남도령</span>
       </footer>
     </div>
   );

@@ -52,12 +52,9 @@ export function AboutPage() {
     <article className="about-page">
       <header className="about-intro">
         <p className="eyebrow">ABOUT SAJUSAJU</p>
-        <h1>생일에서 발견한 이미지,<br />네 세계에서 만나는 캐릭터.</h1>
-        <p>SAJUSAJU는 일주가 가진 상징과 분위기를 대표 동물과 작품 속 인물로 풀어낸 캐릭터 발견 서비스입니다. 미래를 단정하는 운세가 아니라, 나를 새롭게 바라보고 함께 이야기하기 위한 재미있는 해석을 만듭니다.</p>
         <dl className="about-meta">
           <div><dt>만든이</dt><dd>남도령</dd></div>
           <div><dt>현재 버전</dt><dd>v{packageInfo.version}</dd></div>
-          <div><dt>구성</dt><dd>60일주 · 240 캐릭터 매치</dd></div>
         </dl>
       </header>
 

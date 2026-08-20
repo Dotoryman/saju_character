@@ -39,6 +39,18 @@ export async function trackShare(publicId: string): Promise<void> {
   if (!response.ok) throw new Error("공유 횟수를 기록하지 못했습니다.");
 }
 
+export interface SessionUser {
+  username: string;
+  nickname: string;
+  role: "member" | "admin";
+  forcePasswordChange: boolean;
+}
+
+export interface AdminSummary { users: number; openRequests: number; todayVisitors: number }
+export interface AdminUserRow { id: number; username: string; nickname: string; role: string; status: string; created_at: string; last_login_at: string | null; saved_count: number }
+export interface ChangeRequestRow { request_id: string; result_url: string | null; request_text: string; status: "pending" | "reviewed" | "completed" | "rejected"; admin_note: string | null; created_at: string; updated_at: string; requester_nickname: string | null; handler_nickname: string | null }
+export interface AdminContentRow { cycleIndex: number; ganjiKr: string; theme: string; themeName: string; characterName: string; tagline: string; description: string; imageKey?: string; enabled: boolean; overridden: boolean }
+
 export async function submitCharacterChangeRequest(input: { resultUrl: string; requestText: string }): Promise<{ ok: true; requestId: string }> {
   const response = await fetch("/api/character-change-requests", {
     method: "POST",
@@ -46,4 +58,63 @@ export async function submitCharacterChangeRequest(input: { resultUrl: string; r
     body: JSON.stringify(input),
   });
   return readJson<{ ok: true; requestId: string }>(response);
+}
+
+export async function fetchSession(): Promise<SessionUser | null> {
+  return (await readJson<{ user: SessionUser | null }>(await fetch("/api/auth/me"))).user;
+}
+
+export async function signup(input: { username: string; nickname: string; password: string; turnstileToken?: string }): Promise<SessionUser> {
+  const response = await fetch("/api/auth/signup", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(input) });
+  return (await readJson<{ user: SessionUser }>(response)).user;
+}
+
+export async function login(input: { username: string; password: string; turnstileToken?: string }): Promise<SessionUser> {
+  const response = await fetch("/api/auth/login", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(input) });
+  return (await readJson<{ user: SessionUser }>(response)).user;
+}
+
+export async function logout(): Promise<void> {
+  await readJson<{ ok: true }>(await fetch("/api/auth/logout", { method: "POST" }));
+}
+
+export async function fetchSavedResults(): Promise<ResultViewModel[]> {
+  return (await readJson<{ items: ResultViewModel[] }>(await fetch("/api/me/results"))).items;
+}
+
+export async function changePassword(input: { currentPassword: string; newPassword: string }): Promise<void> {
+  await readJson(await fetch("/api/me/password", { method: "PATCH", headers: { "content-type": "application/json" }, body: JSON.stringify(input) }));
+}
+
+export async function trackTodayVisitor(): Promise<number> {
+  return (await readJson<{ count: number }>(await fetch("/api/visitors/today", { method: "POST" }))).count;
+}
+
+export async function fetchAdminSummary(): Promise<AdminSummary> {
+  return readJson<AdminSummary>(await fetch("/api/admin/summary"));
+}
+
+export async function fetchAdminUsers(): Promise<AdminUserRow[]> {
+  return (await readJson<{ items: AdminUserRow[] }>(await fetch("/api/admin/users"))).items;
+}
+
+export async function fetchAdminRequests(): Promise<ChangeRequestRow[]> {
+  return (await readJson<{ items: ChangeRequestRow[] }>(await fetch("/api/admin/change-requests"))).items;
+}
+
+export async function updateAdminRequest(requestId: string, input: { status: ChangeRequestRow["status"]; adminNote: string }): Promise<void> {
+  await readJson(await fetch(`/api/admin/change-requests/${encodeURIComponent(requestId)}`, { method: "PATCH", headers: { "content-type": "application/json" }, body: JSON.stringify(input) }));
+}
+
+export async function fetchAdminContent(): Promise<AdminContentRow[]> {
+  return (await readJson<{ items: AdminContentRow[] }>(await fetch("/api/admin/content"))).items;
+}
+
+export async function updateAdminContent(item: AdminContentRow): Promise<void> {
+  await readJson(await fetch(`/api/admin/content/${item.cycleIndex}/${encodeURIComponent(item.theme)}`, { method: "PATCH", headers: { "content-type": "application/json" }, body: JSON.stringify(item) }));
+}
+
+export async function uploadAdminContentImage(item: AdminContentRow, file: File): Promise<string> {
+  const response = await fetch(`/api/admin/content/${item.cycleIndex}/${encodeURIComponent(item.theme)}/image`, { method: "PUT", headers: { "content-type": file.type }, body: file });
+  return (await readJson<{ imageKey: string }>(response)).imageKey;
 }

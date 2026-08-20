@@ -1,8 +1,10 @@
-import { type FormEvent, useState } from "react";
+import { type FormEvent, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { createResult } from "../lib/api";
+import { createResult, trackTodayVisitor } from "../lib/api";
+import { useAuth } from "../features/auth/AuthContext";
 
 export function HomePage() {
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [nickname, setNickname] = useState("");
   const [birthYear, setBirthYear] = useState("");
@@ -10,6 +12,10 @@ export function HomePage() {
   const [birthDay, setBirthDay] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [visitorCount, setVisitorCount] = useState<number | null>(null);
+
+  useEffect(() => { void trackTodayVisitor().then(setVisitorCount).catch(() => undefined); }, []);
+  useEffect(() => { if (user && !nickname) setNickname(user.nickname); }, [user, nickname]);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -111,6 +117,7 @@ export function HomePage() {
           </button>
         </form>
         <p className="privacy-note">입력한 정보는 결과 생성에만 사용하며, 공개 화면에서는 안전하게 가려집니다.</p>
+        {visitorCount !== null && <p className="visitor-count">오늘 <strong>{visitorCount.toLocaleString("ko-KR")}</strong>명이 캐릭터를 찾으러 왔어요.</p>}
       </section>
 
       <section className="how-it-works" aria-label="이용 방법">
