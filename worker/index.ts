@@ -60,7 +60,7 @@ const bootstrapSchema = z.object({
   password: z.string().min(5).max(72),
 });
 const changePasswordSchema = z.object({
-  currentPassword: z.string().min(8).max(72),
+  currentPassword: z.string().min(5, "현재 비밀번호를 확인해 주세요.").max(72),
   newPassword: z.string().min(8, "새 비밀번호는 8자 이상 입력해 주세요.").max(72),
 });
 
