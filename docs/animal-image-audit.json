@@ -1,0 +1,295 @@
+{
+  "비버": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/6/6b/American_Beaver.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "pageTitle": "North_American_beaver",
+    "sourcePage": "https://en.wikipedia.org/wiki/North_American_beaver"
+  },
+  "사향노루": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Moschus_moschiferus_in_Plzen_zoo_%2812.02.2011%29.jpg/1280px-Moschus_moschiferus_in_Plzen_zoo_%2812.02.2011%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "pageTitle": "Siberian_musk_deer",
+    "sourcePage": "https://en.wikipedia.org/wiki/Siberian_musk_deer"
+  },
+  "호랑이": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Bengal_tiger_%28Panthera_tigris_tigris%29_female_3_crop.jpg/1280px-Bengal_tiger_%28Panthera_tigris_tigris%29_female_3_crop.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "pageTitle": "Tiger",
+    "sourcePage": "https://en.wikipedia.org/wiki/Tiger"
+  },
+  "붉은여우": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Portrait_of_a_red_fox_in_Rautas_fj%C3%A4llurskog_%28cropped%29.jpg/1280px-Portrait_of_a_red_fox_in_Rautas_fj%C3%A4llurskog_%28cropped%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "pageTitle": "Red_fox",
+    "sourcePage": "https://en.wikipedia.org/wiki/Red_fox"
+  },
+  "코뿔소": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/109_Male_White_rhinoceros_walking_in_the_Kalahari_Desert_of_Namibia_Photo_by_Giles_Laurent.jpg/1280px-109_Male_White_rhinoceros_walking_in_the_Kalahari_Desert_of_Namibia_Photo_by_Giles_Laurent.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "pageTitle": "White_rhinoceros",
+    "sourcePage": "https://en.wikipedia.org/wiki/White_rhinoceros"
+  },
+  "사막뱀": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Hornviper_Cerastes_cerastes.jpg/1280px-Hornviper_Cerastes_cerastes.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "pageTitle": "Saharan_horned_viper",
+    "sourcePage": "https://en.wikipedia.org/wiki/Cerastes_cerastes"
+  },
+  "백호": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/Standing_white_tiger.jpg/1280px-Standing_white_tiger.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "pageTitle": "White_tiger",
+    "sourcePage": "https://en.wikipedia.org/wiki/White_tiger"
+  },
+  "흰사슴": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Albino-Damhirsch_Hellenthal_0656.jpg/1280px-Albino-Damhirsch_Hellenthal_0656.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "pageTitle": "White_stag",
+    "sourcePage": "https://en.wikipedia.org/wiki/White_stag"
+  },
+  "범고래": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/Killerwhales_jumping.jpg/1280px-Killerwhales_jumping.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "pageTitle": "Orca",
+    "sourcePage": "https://en.wikipedia.org/wiki/Orca"
+  },
+  "흰담비": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/R%C3%B8yskatt_%28Mustela_erminea_erminea%29%2C_Lista%2C_Norway.jpg/1280px-R%C3%B8yskatt_%28Mustela_erminea_erminea%29%2C_Lista%2C_Norway.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "pageTitle": "Stoat",
+    "sourcePage": "https://en.wikipedia.org/wiki/Stoat"
+  },
+  "늑대": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Eurasian_wolf_2.jpg/1280px-Eurasian_wolf_2.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "pageTitle": "Wolf",
+    "sourcePage": "https://en.wikipedia.org/wiki/Wolf"
+  },
+  "수달": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/d/d3/Fischotter%2C_Lutra_Lutra.JPG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "pageTitle": "Eurasian_otter",
+    "sourcePage": "https://en.wikipedia.org/wiki/Eurasian_otter"
+  },
+  "붉은박쥐": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/0/0f/C-red-bat.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "pageTitle": "Eastern_red_bat",
+    "sourcePage": "https://en.wikipedia.org/wiki/Eastern_red_bat"
+  },
+  "붉은판다": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Red_Panda%2C_Gentle_Tree-Dweller_of_the_Himalayas.jpg/1280px-Red_Panda%2C_Gentle_Tree-Dweller_of_the_Himalayas.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "pageTitle": "Red_panda",
+    "sourcePage": "https://en.wikipedia.org/wiki/Red_panda"
+  },
+  "불곰": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/2010-kodiak-bear-1.jpg/1280px-2010-kodiak-bear-1.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "pageTitle": "Brown_bear",
+    "sourcePage": "https://en.wikipedia.org/wiki/Brown_bear"
+  },
+  "토끼": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/5/5f/Oryctolagus_cuniculus_-_euqirneto_-_419737670_%28cropped%29.jpeg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "pageTitle": "European_rabbit",
+    "sourcePage": "https://en.wikipedia.org/wiki/European_rabbit"
+  },
+  "천산갑": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/9/94/Manis_pentadactyla_%2829054818144%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "pageTitle": "Chinese_pangolin",
+    "sourcePage": "https://en.wikipedia.org/wiki/Chinese_pangolin"
+  },
+  "흰뱀": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Albino_snakes.jpg/500px-Albino_snakes.jpg",
+    "pageTitle": "File:Albino snakes.jpg",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Albino_snakes.jpg",
+    "verifiedOverride": true
+  },
+  "흑표범": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Black_Panther_-_India.jpg/1280px-Black_Panther_-_India.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "pageTitle": "Black_panther",
+    "sourcePage": "https://en.wikipedia.org/wiki/Black_panther"
+  },
+  "산양": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/4/4c/Nemorhaedus_caudatus.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "pageTitle": "Long-tailed_goral",
+    "sourcePage": "https://en.wikipedia.org/wiki/Long-tailed_goral"
+  },
+  "독수리": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/015_Wild_Golden_Eagle_in_flight_at_Pfyn-Finges_%28Switzerland%29_Photo_by_Giles_Laurent.jpg/1280px-015_Wild_Golden_Eagle_in_flight_at_Pfyn-Finges_%28Switzerland%29_Photo_by_Giles_Laurent.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "pageTitle": "Golden_eagle",
+    "sourcePage": "https://en.wikipedia.org/wiki/Golden_eagle"
+  },
+  "백로": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Great_Egret_%28Ardea_alba%29_in_Breeding_Plumage%2C_Cape_May_County%2C_New_Jersey%2C_USA_%28cropped%29.png/1280px-Great_Egret_%28Ardea_alba%29_in_Breeding_Plumage%2C_Cape_May_County%2C_New_Jersey%2C_USA_%28cropped%29.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "pageTitle": "Great_egret",
+    "sourcePage": "https://en.wikipedia.org/wiki/Great_egret"
+  },
+  "사자개": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Chow-chow_in_Tallinn.JPG/1280px-Chow-chow_in_Tallinn.JPG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "pageTitle": "Chow_Chow",
+    "sourcePage": "https://en.wikipedia.org/wiki/Chow_Chow"
+  },
+  "해달": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/0/02/Sea_Otter_%28Enhydra_lutris%29_%2825169790524%29_crop.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "pageTitle": "Sea_otter",
+    "sourcePage": "https://en.wikipedia.org/wiki/Sea_otter"
+  },
+  "물소": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Water_buffalo_at_Rinca.jpg/1280px-Water_buffalo_at_Rinca.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "pageTitle": "Water_buffalo",
+    "sourcePage": "https://en.wikipedia.org/wiki/Water_buffalo"
+  },
+  "들소": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/American_bison_k5680-1.jpg/1280px-American_bison_k5680-1.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "pageTitle": "American_bison",
+    "sourcePage": "https://en.wikipedia.org/wiki/American_bison"
+  },
+  "흰여우": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/Vulpes_lagopus_in_Iceland_%28cropped_3%29.jpg/1280px-Vulpes_lagopus_in_Iceland_%28cropped_3%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "pageTitle": "Arctic_fox",
+    "sourcePage": "https://en.wikipedia.org/wiki/Arctic_fox"
+  },
+  "청룡": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/8/8f/Azure_Dragon.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "pageTitle": "Azure_Dragon",
+    "sourcePage": "https://en.wikipedia.org/wiki/Azure_Dragon"
+  },
+  "살무사": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/4/48/Mamushi_togurosugata.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "pageTitle": "Mamushi",
+    "sourcePage": "https://en.wikipedia.org/wiki/Mamushi"
+  },
+  "사자": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/020_The_lion_king_Snyggve_in_the_Serengeti_National_Park_Photo_by_Giles_Laurent.jpg/1280px-020_The_lion_king_Snyggve_in_the_Serengeti_National_Park_Photo_by_Giles_Laurent.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "pageTitle": "Lion",
+    "sourcePage": "https://en.wikipedia.org/wiki/Lion"
+  },
+  "꽃사슴": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Cervus_nippon_002.jpg/1280px-Cervus_nippon_002.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "pageTitle": "Sika_deer",
+    "sourcePage": "https://en.wikipedia.org/wiki/Sika_deer"
+  },
+  "불여우": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Portrait_of_a_red_fox_in_Rautas_fj%C3%A4llurskog_%28cropped%29.jpg/1280px-Portrait_of_a_red_fox_in_Rautas_fj%C3%A4llurskog_%28cropped%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "pageTitle": "Red_fox",
+    "sourcePage": "https://en.wikipedia.org/wiki/Red_fox"
+  },
+  "공작": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Peacock_on_tree_%2852077240794%29.jpg/1280px-Peacock_on_tree_%2852077240794%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "pageTitle": "Indian_peafowl",
+    "sourcePage": "https://en.wikipedia.org/wiki/Indian_peafowl"
+  },
+  "티베탄 마스티프": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/BIR_Grupp_2-_TIBETANSK_MASTIFF%2C_Legenda_Tibeta_Temudzhin_%2823938629470%29.jpg/1280px-BIR_Grupp_2-_TIBETANSK_MASTIFF%2C_Legenda_Tibeta_Temudzhin_%2823938629470%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "pageTitle": "Tibetan_Mastiff",
+    "sourcePage": "https://en.wikipedia.org/wiki/Tibetan_Mastiff"
+  },
+  "카피바라": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Capybaracropped.jpg/1280px-Capybaracropped.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "pageTitle": "Capybara",
+    "sourcePage": "https://en.wikipedia.org/wiki/Capybara"
+  },
+  "설표": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Irbis4.JPG/1280px-Irbis4.JPG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "pageTitle": "Snow_leopard",
+    "sourcePage": "https://en.wikipedia.org/wiki/Snow_leopard"
+  },
+  "북극여우": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/Vulpes_lagopus_in_Iceland_%28cropped_3%29.jpg/1280px-Vulpes_lagopus_in_Iceland_%28cropped_3%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "pageTitle": "Arctic_fox",
+    "sourcePage": "https://en.wikipedia.org/wiki/Arctic_fox"
+  },
+  "재규어": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/0/0a/Standing_jaguar.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "pageTitle": "Jaguar",
+    "sourcePage": "https://en.wikipedia.org/wiki/Jaguar"
+  },
+  "청설모": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Squirrel_posing.jpg/1280px-Squirrel_posing.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "pageTitle": "Eurasian_red_squirrel",
+    "sourcePage": "https://en.wikipedia.org/wiki/Red_squirrel"
+  },
+  "용": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Chinese_dragon_asset_heraldry.svg/1280px-Chinese_dragon_asset_heraldry.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "pageTitle": "Chinese_dragon",
+    "sourcePage": "https://en.wikipedia.org/wiki/Chinese_dragon"
+  },
+  "청사": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/Smooth_greensnake_%28Opheodrys_vernalis%29_Madden_Haag.jpg/1280px-Smooth_greensnake_%28Opheodrys_vernalis%29_Madden_Haag.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "pageTitle": "Smooth_green_snake",
+    "sourcePage": "https://en.wikipedia.org/wiki/Smooth_green_snake"
+  },
+  "불사조": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/RedPhoenixnb.svg/500px-RedPhoenixnb.svg.png",
+    "pageTitle": "File:RedPhoenixnb.svg",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:RedPhoenixnb.svg",
+    "verifiedOverride": true
+  },
+  "사슴": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/d/d9/Family_Cervidae_five_species.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "pageTitle": "Deer",
+    "sourcePage": "https://en.wikipedia.org/wiki/Deer"
+  },
+  "고릴라": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/Gorille_des_plaines_de_l%27ouest_%C3%A0_l%27Espace_Zoologique.jpg/1280px-Gorille_des_plaines_de_l%27ouest_%C3%A0_l%27Espace_Zoologique.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "pageTitle": "Gorilla",
+    "sourcePage": "https://en.wikipedia.org/wiki/Gorilla"
+  },
+  "황조롱이": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/2/24/Common_kestrel_falco_tinnunculus.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "pageTitle": "Common_kestrel",
+    "sourcePage": "https://en.wikipedia.org/wiki/Common_kestrel"
+  },
+  "회색늑대": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Eurasian_wolf_2.jpg/1280px-Eurasian_wolf_2.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "pageTitle": "Wolf",
+    "sourcePage": "https://en.wikipedia.org/wiki/Wolf"
+  },
+  "흰돌고래": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Oceanogr%C3%A0fic_29102004.jpg/1280px-Oceanogr%C3%A0fic_29102004.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "pageTitle": "Beluga_whale",
+    "sourcePage": "https://en.wikipedia.org/wiki/Beluga_whale"
+  },
+  "오소리": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Meles_leucurus_-_Kunming_Natural_History_Museum_of_Zoology_-_DSC02498.JPG/1280px-Meles_leucurus_-_Kunming_Natural_History_Museum_of_Zoology_-_DSC02498.JPG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "pageTitle": "Asian_badger",
+    "sourcePage": "https://en.wikipedia.org/wiki/Asian_badger"
+  },
+  "시베리아호랑이": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/P.t.altaica_Tomak_Male.jpg/1280px-P.t.altaica_Tomak_Male.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "pageTitle": "Siberian_tiger",
+    "sourcePage": "https://en.wikipedia.org/wiki/Siberian_tiger"
+  },
+  "앙고라토끼": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/8/88/Fluffy_white_bunny_rabbit.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "pageTitle": "Angora_rabbit",
+    "sourcePage": "https://en.wikipedia.org/wiki/Angora_rabbit"
+  },
+  "코모도드래곤": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/202306_Varanus_komodoensis.jpg/1280px-202306_Varanus_komodoensis.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "pageTitle": "Komodo_dragon",
+    "sourcePage": "https://en.wikipedia.org/wiki/Komodo_dragon"
+  },
+  "붉은코브라": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Naja_pallida%2C_Boston.jpg/1280px-Naja_pallida%2C_Boston.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "pageTitle": "Red_spitting_cobra",
+    "sourcePage": "https://en.wikipedia.org/wiki/Red_spitting_cobra"
+  },
+  "코끼리": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/178_Male_African_bush_elephant_in_Etosha_National_Park_Photo_by_Giles_Laurent.jpg/1280px-178_Male_African_bush_elephant_in_Etosha_National_Park_Photo_by_Giles_Laurent.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "pageTitle": "African_bush_elephant",
+    "sourcePage": "https://en.wikipedia.org/wiki/African_bush_elephant"
+  },
+  "들양": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/New_Mexico_Bighorn_Sheep.JPG/1280px-New_Mexico_Bighorn_Sheep.JPG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "pageTitle": "Bighorn_sheep",
+    "sourcePage": "https://en.wikipedia.org/wiki/Bighorn_sheep"
+  },
+  "은빛고릴라": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/Gorille_des_plaines_de_l%27ouest_%C3%A0_l%27Espace_Zoologique.jpg/1280px-Gorille_des_plaines_de_l%27ouest_%C3%A0_l%27Espace_Zoologique.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "pageTitle": "Gorilla",
+    "sourcePage": "https://en.wikipedia.org/wiki/Gorilla"
+  },
+  "검은늑대": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/0436_OR-13_odfw_%2817294279475%29.jpg/1280px-0436_OR-13_odfw_%2817294279475%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "pageTitle": "Black_wolf",
+    "sourcePage": "https://en.wikipedia.org/wiki/Black_wolf"
+  },
+  "너구리": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Nyctereutes.png/1280px-Nyctereutes.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "pageTitle": "Raccoon_dog",
+    "sourcePage": "https://en.wikipedia.org/wiki/Nyctereutes"
+  },
+  "백공작": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/White-peacock.jpg/960px-White-peacock.jpg",
+    "pageTitle": "File:White-peacock.jpg",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:White-peacock.jpg",
+    "verifiedOverride": true
+  }
+}

@@ -10,6 +10,7 @@ export interface ResultViewModel {
     name: string;
     animal: string;
     description: string;
+    imageKey: string;
   };
   characters: CharacterResult[];
   user: {

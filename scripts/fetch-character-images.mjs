@@ -7,7 +7,7 @@ const groups = {
     "마이트 가이": "Might Guy", "미나토": "Minato Namikaze", "미츠키": "Mitsuki", "사소리": "Sasori",
     "사스케": "Sasuke Uchiha", "사이": "Sai", "사쿠라": "Sakura Haruno", "사쿠모": "Sakumo Hatake",
     "시노": "Shino Aburame", "시즈네": "Shizune", "야마토": "Yamato", "오로치마루": "Orochimaru",
-    "오비토": "Obito", "오오노키": "Onoki", "우타카타": "Utakata", "이노": "Ino Yamanaka",
+    "오비토": "Obito Uchiha", "오오노키": "Onoki", "우타카타": "Utakata", "이노": "Ino Yamanaka",
     "이루카": "Iruka Umino", "이타치": "Itachi Uchiha", "자부자": "Zabuza Momochi", "지라이야": "Jiraiya",
     "초지": "Chouji Akimichi", "쵸지": "Chouji Akimichi", "쵸쵸": "Chouchou Akimichi", "츠나데": "Tsunade",
     "카부토": "Kabuto Yakushi", "카카시": "Kakashi Hatake", "카쿠즈": "Kakuzu", "코난": "Konan",
@@ -40,7 +40,7 @@ const groups = {
     "골 D. 로저": "Roger", "프랑키": "Franky", "카타쿠리": "Charlotte Katakuri",
   },
   ghibli: {
-    "가오나시": "No-Face", "나우시카": "Nausicaä", "라퓨타 로봇병": "Robot Soldier", "메이": "Mei Kusakabe",
+    "가오나시": "No-Face", "나우시카": "Nausicaä", "라퓨타 로봇병": "Robot Soldier Laputa", "메이": "Mei Kusakabe",
     "모로": "Moro", "무스카": "Muska", "산": "San", "소피": "Sophie Hatter",
     "쇼우": "Shou", "숲의 신": "Shishigami", "시즈쿠": "Shizuku Tsukishima",
     "시타": "Sheeta", "아리에티": "Arrietty", "아시타카": "Ashitaka", "오소노": "Osono",
@@ -68,7 +68,7 @@ const selections = {};
 for (let offset = 0; offset < entries.length; offset += 8) {
   const batch = entries.slice(offset, offset + 8);
   const fields = batch.map((entry, index) =>
-    `q${index}: Page(perPage: 10) { characters(search: ${JSON.stringify(entry.query)}) { id name { full native } image { large } media(perPage: 6) { nodes { title { romaji english } } } } }`,
+    `q${index}: Page(perPage: 20) { characters(search: ${JSON.stringify(entry.query)}) { id name { full native } image { large } media(perPage: 20) { nodes { title { romaji english } } } } }`,
   ).join("\n");
   const response = await fetch("https://graphql.anilist.co", {
     method: "POST",
@@ -98,36 +98,25 @@ for (let offset = 0; offset < entries.length; offset += 8) {
   await new Promise((resolve) => setTimeout(resolve, 650));
 }
 
-const fallbacks = {
-  "naruto|오비토": "naruto|카카시",
-  "naruto|한": "naruto|킬러 비",
-  "inuyasha|링": "inuyasha|카고메",
-  "inuyasha|카에데": "inuyasha|키쿄우",
-  "inuyasha|칸나": "inuyasha|카구라",
-  "inuyasha|코우가": "inuyasha|이누야샤",
-  "inuyasha|호센키": "inuyasha|류코츠세이",
-  "one-piece|몽키 D. 드래곤": "one-piece|가프",
-  "one-piece|킹": "one-piece|카이도",
-  "ghibli|라퓨타 로봇병": "ghibli|시타",
-  "ghibli|쇼우": "ghibli|아리에티",
+// Text search misses or ambiguously resolves several supporting characters. These
+// records were checked against each title's complete cast. Explicit overrides are
+// safer than ever substituting another character with a similar search result.
+const verifiedOverrides = {
+  "naruto|오비토": { url: "https://s4.anilist.co/file/anilistcdn/character/large/b3149-j6cl8A9yup51.png", sourceName: "Tobi", sourceId: 3149, media: ["Naruto: Shippuden"] },
+  "naruto|한": { url: "https://s4.anilist.co/file/anilistcdn/character/large/b23223-XdbDbvsVkbfd.png", sourceName: "Han", sourceId: 23223, media: ["Naruto: Shippuden"] },
+  "inuyasha|링": { url: "https://s4.anilist.co/file/anilistcdn/character/large/b1365-C5r2sPW8PwA8.jpg", sourceName: "Rin", sourceId: 1365, media: ["InuYasha"] },
+  "inuyasha|카에데": { url: "https://s4.anilist.co/file/anilistcdn/character/large/b1360-nvgYPaUEMeG6.jpg", sourceName: "Kaede", sourceId: 1360, media: ["InuYasha"] },
+  "inuyasha|코우가": { url: "https://s4.anilist.co/file/anilistcdn/character/large/1371.jpg", sourceName: "Koga", sourceId: 1371, media: ["InuYasha"] },
+  "inuyasha|아야메": { url: "https://s4.anilist.co/file/anilistcdn/character/large/1372.jpg", sourceName: "Ayame", sourceId: 1372, media: ["InuYasha"] },
+  "inuyasha|호센키": { url: "https://static.wikia.nocookie.net/inuyasha/images/6/6c/Hosenki.jpg/revision/latest?cb=20240522135956", sourceName: "Hosenki", sourceId: null, media: ["InuYasha"] },
+  "inuyasha|투아왕": { url: "https://s4.anilist.co/file/anilistcdn/character/large/3167.jpg", sourceName: "Inu no Taisho", sourceId: 3167, media: ["InuYasha the Movie 3: Swords of an Honorable Ruler"] },
+  "one-piece|킹": { url: "https://s4.anilist.co/file/anilistcdn/character/large/b130416-viDCE52yqITx.png", sourceName: "King", sourceId: 130416, media: ["ONE PIECE"] },
+  "ghibli|라퓨타 로봇병": { url: "https://www.ghibli.jp/gallery/laputa025.jpg", sourceName: "Robot Soldier", sourceId: null, media: ["Castle in the Sky"] },
+  "ghibli|쇼우": { url: "https://s4.anilist.co/file/anilistcdn/character/large/b32919-XjOOS5kE3qRG.png", sourceName: "Shou", sourceId: 32919, media: ["The Secret World of Arrietty"] },
 };
-
-// AniList text search does not reliably expose this movie-only character.
-// Keep the verified character record explicit so the Korean display-name rename
-// does not break the existing image cache or silently select a different person.
-selections["inuyasha|투아왕"] = {
-  url: "https://s4.anilist.co/file/anilistcdn/character/large/3167.jpg",
-  sourceName: "Inu no Taisho",
-  sourceId: 3167,
-  media: ["InuYasha the Movie 3: Swords of an Honorable Ruler"],
-  verifiedOverride: true,
-};
-for (const [target, source] of Object.entries(fallbacks)) {
-  if (!selections[target] && selections[source]) {
-    selections[target] = { ...selections[source], fallbackFrom: source };
-  }
+for (const [key, value] of Object.entries(verifiedOverrides)) {
+  selections[key] = { ...value, verifiedOverride: true };
 }
-
 const lines = Object.entries(selections)
   .sort(([left], [right]) => left.localeCompare(right, "ko"))
   .map(([key, value]) => `  ${JSON.stringify(key)}: ${JSON.stringify(value.url)},`);

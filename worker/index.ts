@@ -2,6 +2,7 @@ import { z } from "zod";
 import { getArchetype } from "../src/data/archetypes";
 import { getCharacterResults } from "../src/data/characterMappings";
 import { CHARACTER_IMAGE_SOURCES } from "../src/data/characterImageSources.generated";
+import { ANIMAL_IMAGE_SOURCES } from "../src/data/animalImageSources.generated";
 import { maskBirthDate, maskNickname } from "../src/domain/privacy/mask";
 import { calculateDayPillar } from "../src/domain/saju/calculateDayPillar";
 import type { ResultViewModel } from "../src/shared/result";
@@ -41,12 +42,7 @@ async function getCharacterImage(pathname: string, env: Env): Promise<Response> 
   const sourceUrl = CHARACTER_IMAGE_SOURCES[mappingKey];
   if (!sourceUrl) return new Response("Not found", { status: 404 });
 
-  // The public label changed to 투아왕 in v0.4.0. Reuse the already-populated
-  // R2 object rather than fetching and storing an identical second copy.
-  const cachedCharacterName = theme === "inuyasha" && characterName === "투아왕"
-    ? "이누노타이쇼"
-    : characterName;
-  const objectKey = `characters/${theme}/${cachedCharacterName}.jpg`;
+  const objectKey = `characters/${theme}/${characterName}.jpg`;
   const cached = await env.ASSETS_BUCKET.get(objectKey);
   if (cached) {
     const headers = new Headers();
@@ -73,6 +69,46 @@ async function getCharacterImage(pathname: string, env: Env): Promise<Response> 
   });
 }
 
+async function getAnimalImage(pathname: string, env: Env): Promise<Response> {
+  const match = /^\/media\/animals\/([^/]+)$/.exec(pathname);
+  if (!match?.[1]) return new Response("Not found", { status: 404 });
+
+  const animalName = decodeURIComponent(match[1]);
+  const sourceUrl = ANIMAL_IMAGE_SOURCES[animalName];
+  if (!sourceUrl) return new Response("Not found", { status: 404 });
+
+  const objectKey = `animals/${animalName}.jpg`;
+  const cached = await env.ASSETS_BUCKET.get(objectKey);
+  if (cached) {
+    const headers = new Headers();
+    cached.writeHttpMetadata(headers);
+    headers.set("cache-control", "public, max-age=2592000, immutable");
+    headers.set("x-content-type-options", "nosniff");
+    return new Response(cached.body, { headers });
+  }
+
+  const upstream = await fetch(sourceUrl, {
+    headers: {
+      accept: "image/avif,image/webp,image/*",
+      "user-agent": "SAJUSAJU/0.4.2 (https://sajusaju.cloud)",
+    },
+  });
+  if (!upstream.ok) return new Response("Image unavailable", { status: 502 });
+  const bytes = await upstream.arrayBuffer();
+  const contentType = upstream.headers.get("content-type") || "image/jpeg";
+  await env.ASSETS_BUCKET.put(objectKey, bytes, {
+    httpMetadata: { contentType },
+    customMetadata: { source: "Wikipedia/Wikimedia", sourceUrl },
+  });
+  return new Response(bytes, {
+    headers: {
+      "content-type": contentType,
+      "cache-control": "public, max-age=2592000, immutable",
+      "x-content-type-options": "nosniff",
+    },
+  });
+}
+
 function toViewModel(row: ResultRow): ResultViewModel {
   const archetype = getArchetype(row.cycle_index);
   return {
@@ -84,6 +120,7 @@ function toViewModel(row: ResultRow): ResultViewModel {
       name: archetype.archetypeName,
       animal: archetype.animalName,
       description: archetype.description,
+      imageKey: `/media/animals/${encodeURIComponent(archetype.animalName)}`,
     },
     characters: getCharacterResults(row.cycle_index),
     user: {
@@ -189,7 +226,7 @@ async function getResultPage(request: Request, publicId: string, env: Env): Prom
   const result = toViewModel(row);
   const title = `${result.ganjiKr}일주 · ${result.archetype.animal} | SAJUSAJU`;
   const description = `${result.archetype.name}. 네 작품 속 닮은 캐릭터를 확인해 보세요.`;
-  const image = new URL(result.characters[0]?.imageKey ?? "/assets/brand/og-preview.jpg", request.url).href;
+  const image = new URL(result.archetype.imageKey ?? "/assets/brand/og-preview.jpg", request.url).href;
   const canonicalUrl = new URL(request.url).href;
 
   const rewriter = new HTMLRewriter()
@@ -199,7 +236,7 @@ async function getResultPage(request: Request, publicId: string, env: Env): Prom
     .on('meta[property="og:description"]', { element(element) { element.setAttribute("content", description); } })
     .on('meta[property="og:url"]', { element(element) { element.setAttribute("content", canonicalUrl); } })
     .on('meta[property="og:image"]', { element(element) { element.setAttribute("content", image); } })
-    .on('meta[property="og:image:alt"]', { element(element) { element.setAttribute("content", `${result.ganjiKr}일주 대표 캐릭터`); } })
+    .on('meta[property="og:image:alt"]', { element(element) { element.setAttribute("content", `${result.ganjiKr}일주 대표 동물 ${result.archetype.animal}`); } })
     .on('meta[name="twitter:title"]', { element(element) { element.setAttribute("content", title); } })
     .on('meta[name="twitter:description"]', { element(element) { element.setAttribute("content", description); } })
     .on('meta[name="twitter:image"]', { element(element) { element.setAttribute("content", image); } });
@@ -236,6 +273,9 @@ async function route(request: Request, env: Env): Promise<Response> {
 
   if (pathname.startsWith("/media/characters/") && request.method === "GET") {
     return getCharacterImage(pathname, env);
+  }
+  if (pathname.startsWith("/media/animals/") && request.method === "GET") {
+    return getAnimalImage(pathname, env);
   }
 
   const resultPageMatch = /^\/result\/([A-Za-z0-9]+)$/.exec(pathname);

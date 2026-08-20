@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { createShareImage, shareImageFileName } from "../features/share/createShareImage";
 import { downloadImage } from "../features/share/downloadImage";
 import { canUseKakaoShare, shareWithKakao } from "../features/share/kakaoShare";
-import { nativeShareImage } from "../features/share/nativeShare";
+import { nativeSaveImage, nativeShareImage } from "../features/share/nativeShare";
 import { trackShare } from "../lib/api";
 import type { ResultViewModel } from "../shared/result";
 import { CharacterCard } from "./CharacterCard";
@@ -11,7 +11,10 @@ import { CharacterCard } from "./CharacterCard";
 export function ResultView({ result }: { result: ResultViewModel }) {
   const [shareStatus, setShareStatus] = useState("");
   const [isSharing, setIsSharing] = useState(false);
-  const representativeCharacter = result.characters[0];
+  const [animalImageFailed, setAnimalImageFailed] = useState(false);
+  const prefersNativeSave = typeof navigator !== "undefined" && (
+    navigator.maxTouchPoints > 0 || /Android|iPhone|iPad/i.test(navigator.userAgent)
+  );
 
   async function makeShareFile(): Promise<{ blob: Blob; file: File }> {
     const blob = await createShareImage(result);
@@ -27,10 +30,13 @@ export function ResultView({ result }: { result: ResultViewModel }) {
     setIsSharing(true);
     setShareStatus("공유 이미지를 만드는 중…");
     try {
-      const { blob } = await makeShareFile();
-      downloadImage(blob, shareImageFileName(result));
+      const { blob, file } = await makeShareFile();
+      const openedSaveSheet = prefersNativeSave && await nativeSaveImage(file);
+      if (!openedSaveSheet) downloadImage(blob, file.name);
       await recordShare();
-      setShareStatus("1080×1350 PNG 이미지를 저장했습니다.");
+      setShareStatus(openedSaveSheet
+        ? "공유 화면에서 ‘사진에 저장’ 또는 ‘이미지 저장’을 선택해 주세요."
+        : "1080×1350 PNG 이미지를 저장했습니다.");
     } catch (caught) {
       setShareStatus(caught instanceof Error ? caught.message : "이미지를 만들지 못했습니다.");
     } finally {
@@ -83,34 +89,24 @@ export function ResultView({ result }: { result: ResultViewModel }) {
             <p className="eyebrow">YOUR DAY PILLAR</p>
             <p className="result-owner">{result.user.displayNickname} 님의 일주</p>
             <h1 id="result-title"><span>{result.ganji}</span>{result.ganjiKr}일주</h1>
-            <div className="result-identity">
-              <span>대표 동물</span>
-              <strong>{result.archetype.animal}</strong>
-              <i aria-hidden="true" />
-              <span>일주의 이미지</span>
-              <strong>{result.archetype.name}</strong>
-            </div>
             <p className="archetype-description">{result.archetype.description}</p>
-            <a className="result-scroll-link" href="#characters">닮은 캐릭터 4명 보기 <span aria-hidden="true">↓</span></a>
           </div>
-          {representativeCharacter && <div className="result-hero-character">
-            <div className="hero-character-frame">
-              <img alt={`${representativeCharacter.characterName} 캐릭터`} src={representativeCharacter.imageKey} />
-              <div>
-                <span>{representativeCharacter.themeName}</span>
-                <strong>{representativeCharacter.characterName}</strong>
-              </div>
-            </div>
-            <p>가장 먼저 만나는 대표 매치</p>
-          </div>}
+          <figure className={`animal-portrait${animalImageFailed ? " image-unavailable" : ""}`}>
+            {!animalImageFailed && <img
+              alt={`대표 동물 ${result.archetype.animal}`}
+              onError={() => setAnimalImageFailed(true)}
+              src={result.archetype.imageKey}
+            />}
+            <figcaption><span>대표 동물</span><strong>{result.archetype.animal}</strong></figcaption>
+          </figure>
         </div>
       </section>
 
       <section className="character-section" id="characters" aria-labelledby="character-title">
         <div className="section-heading">
           <p className="eyebrow">FOUR WORLDS, ONE YOU</p>
-          <h2 id="character-title">그래서, 이런 캐릭터와 닮았어요</h2>
-          <p>일주의 성향과 인물의 태도·능력·분위기를 연결했습니다. 각 캐릭터 아래에서 나와 닮은 이유를 확인해 보세요.</p>
+          <h2 id="character-title">닮은 캐릭터 네 명</h2>
+          <p>각 작품에서 나의 일주와 닮은 성향을 가진 캐릭터를 한 번에 확인해 보세요.</p>
         </div>
         <div className="character-grid">
           {result.characters.map((character, index) => (
@@ -125,7 +121,7 @@ export function ResultView({ result }: { result: ResultViewModel }) {
         <p>캐릭터까지 모두 확인했다면 세로형 결과 이미지로 저장하거나 친구에게 공유할 수 있어요.</p>
         <div className="result-actions">
           <button className="button primary" disabled={isSharing} type="button" onClick={() => void shareResult()}>공유하기</button>
-          <button className="button secondary" disabled={isSharing} type="button" onClick={() => void saveImage()}>이미지 저장</button>
+          <button className="button secondary" disabled={isSharing} type="button" onClick={() => void saveImage()}>{prefersNativeSave ? "앨범에 저장" : "이미지 저장"}</button>
           <button className="button secondary" disabled={isSharing} type="button" onClick={() => void shareKakao()}>카카오톡</button>
           <Link className="button secondary" to="/">다시 찾아보기</Link>
         </div>

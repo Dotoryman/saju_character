@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
 import { ResultView } from "../components/ResultView";
 import { fetchResult } from "../lib/api";
@@ -10,6 +10,10 @@ export function ResultPage() {
   const initial = location.state as ResultViewModel | null;
   const [result, setResult] = useState<ResultViewModel | null>(initial);
   const [error, setError] = useState("");
+
+  useLayoutEffect(() => {
+    window.scrollTo(0, 0);
+  }, [publicId]);
 
   useEffect(() => {
     if (result?.resultId === publicId) return;
