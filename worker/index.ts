@@ -76,6 +76,11 @@ const updateContentSchema = z.object({
   enabled: z.boolean(),
 });
 
+const updateArchetypeSchema = z.object({
+  animalName: z.string().trim().min(1).max(80),
+  description: z.string().trim().min(1).max(3000),
+});
+
 interface ResultRow {
   public_id: string;
   nickname: string;
@@ -285,6 +290,10 @@ async function getManagedCharacters(cycleIndex: number, env: AppEnv) {
 
 async function toViewModel(row: ResultRow, env: AppEnv): Promise<ResultViewModel> {
   const archetype = getArchetype(row.cycle_index);
+  const override = await env.DB.prepare(
+    "SELECT animal_name, description, image_key FROM archetype_overrides WHERE cycle_index = ?",
+  ).bind(row.cycle_index).first<{ animal_name: string | null; description: string | null; image_key: string | null }>();
+  const animalName = override?.animal_name || archetype.animalName;
   return {
     resultId: row.public_id,
     ganji: archetype.ganji,
@@ -292,9 +301,9 @@ async function toViewModel(row: ResultRow, env: AppEnv): Promise<ResultViewModel
     element: archetype.element,
     archetype: {
       name: archetype.archetypeName,
-      animal: archetype.animalName,
-      description: archetype.description,
-      imageKey: `/media/animals/${encodeURIComponent(archetype.animalName)}`,
+      animal: animalName,
+      description: override?.description || archetype.description,
+      imageKey: override?.image_key || `/media/animals/${encodeURIComponent(animalName)}`,
     },
     characters: await getManagedCharacters(row.cycle_index, env),
     user: {
@@ -678,6 +687,67 @@ async function uploadAdminImage(request: Request, cycleIndex: number, themeSlug:
   return json({ ok: true, imageKey });
 }
 
+async function adminArchetypes(request: Request, env: AppEnv): Promise<Response> {
+  const admin = await requireAdmin(request, env);
+  if (admin instanceof Response) return admin;
+  const { results } = await env.DB.prepare(
+    "SELECT cycle_index, animal_name, description, image_key FROM archetype_overrides",
+  ).all<{ cycle_index: number; animal_name: string | null; description: string | null; image_key: string | null }>();
+  const overrides = new Map(results.map((item) => [item.cycle_index, item]));
+  const items = Array.from({ length: 60 }, (_, cycleIndex) => {
+    const base = getArchetype(cycleIndex);
+    const override = overrides.get(cycleIndex);
+    const animalName = override?.animal_name || base.animalName;
+    return {
+      cycleIndex,
+      ganjiKr: base.ganjiKr,
+      animalName,
+      description: override?.description || base.description,
+      imageKey: override?.image_key || `/media/animals/${encodeURIComponent(animalName)}`,
+      overridden: Boolean(override),
+    };
+  });
+  return json({ items });
+}
+
+async function updateAdminArchetype(request: Request, cycleIndex: number, env: AppEnv): Promise<Response> {
+  const admin = await requireAdmin(request, env);
+  if (admin instanceof Response) return admin;
+  if (!Number.isInteger(cycleIndex) || cycleIndex < 0 || cycleIndex > 59) return json({ error: "일주가 올바르지 않습니다." }, { status: 400 });
+  const parsed = updateArchetypeSchema.safeParse(await request.json().catch(() => null));
+  if (!parsed.success) return json({ error: parsed.error.issues[0]?.message ?? "입력값을 확인해 주세요." }, { status: 400 });
+  const now = new Date().toISOString();
+  await env.DB.prepare(
+    `INSERT INTO archetype_overrides (cycle_index, animal_name, description, updated_by, updated_at)
+     VALUES (?, ?, ?, ?, ?)
+     ON CONFLICT(cycle_index) DO UPDATE SET animal_name = excluded.animal_name, description = excluded.description,
+       updated_by = excluded.updated_by, updated_at = excluded.updated_at`,
+  ).bind(cycleIndex, parsed.data.animalName, parsed.data.description, admin.id, now).run();
+  await audit(env, admin.id, "update", "archetype", String(cycleIndex), parsed.data.animalName);
+  return json({ ok: true });
+}
+
+async function uploadAdminArchetypeImage(request: Request, cycleIndex: number, env: AppEnv): Promise<Response> {
+  const admin = await requireAdmin(request, env);
+  if (admin instanceof Response) return admin;
+  const contentLength = Number(request.headers.get("content-length") ?? 0);
+  const contentType = request.headers.get("content-type") ?? "";
+  if (!request.body || !contentType.startsWith("image/") || contentLength < 1 || contentLength > 5_000_000) return json({ error: "5MB 이하의 이미지 파일을 선택해 주세요." }, { status: 400 });
+  const extension = contentType.includes("png") ? "png" : contentType.includes("webp") ? "webp" : "jpg";
+  const objectKey = `uploads/animals/${cycleIndex}-${crypto.randomUUID()}.${extension}`;
+  await env.ASSETS_BUCKET.put(objectKey, request.body, { httpMetadata: { contentType } });
+  const imageKey = `/media/uploads/${objectKey.slice("uploads/".length)}`;
+  const base = getArchetype(cycleIndex);
+  const now = new Date().toISOString();
+  await env.DB.prepare(
+    `INSERT INTO archetype_overrides (cycle_index, animal_name, description, image_key, updated_by, updated_at)
+     VALUES (?, ?, ?, ?, ?, ?)
+     ON CONFLICT(cycle_index) DO UPDATE SET image_key = excluded.image_key, updated_by = excluded.updated_by, updated_at = excluded.updated_at`,
+  ).bind(cycleIndex, base.animalName, base.description, imageKey, admin.id, now).run();
+  await audit(env, admin.id, "upload", "archetype_image", String(cycleIndex), objectKey);
+  return json({ ok: true, imageKey });
+}
+
 async function route(request: Request, env: AppEnv): Promise<Response> {
   const url = new URL(request.url);
   const pathname = url.pathname;
@@ -722,6 +792,7 @@ async function route(request: Request, env: AppEnv): Promise<Response> {
   if (pathname === "/api/admin/users" && request.method === "GET") return adminUsers(request, env);
   if (pathname === "/api/admin/change-requests" && request.method === "GET") return adminRequests(request, env);
   if (pathname === "/api/admin/content" && request.method === "GET") return adminContent(request, env);
+  if (pathname === "/api/admin/archetypes" && request.method === "GET") return adminArchetypes(request, env);
   const adminRequestMatch = /^\/api\/admin\/change-requests\/([A-Za-z0-9]+)$/.exec(pathname);
   if (adminRequestMatch?.[1] && request.method === "PATCH") return updateAdminRequest(request, adminRequestMatch[1], env);
   const adminContentMatch = /^\/api\/admin\/content\/(\d+)\/([a-z-]+)$/.exec(pathname);
@@ -732,6 +803,10 @@ async function route(request: Request, env: AppEnv): Promise<Response> {
   if (adminImageMatch?.[1] && adminImageMatch[2] && request.method === "PUT") {
     return uploadAdminImage(request, Number(adminImageMatch[1]), adminImageMatch[2], env);
   }
+  const adminArchetypeMatch = /^\/api\/admin\/archetypes\/(\d+)$/.exec(pathname);
+  if (adminArchetypeMatch?.[1] && request.method === "PATCH") return updateAdminArchetype(request, Number(adminArchetypeMatch[1]), env);
+  const adminArchetypeImageMatch = /^\/api\/admin\/archetypes\/(\d+)\/image$/.exec(pathname);
+  if (adminArchetypeImageMatch?.[1] && request.method === "PUT") return uploadAdminArchetypeImage(request, Number(adminArchetypeImageMatch[1]), env);
   if (pathname === "/api/results" && request.method === "POST") {
     return createResult(request, env);
   }

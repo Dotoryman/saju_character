@@ -50,6 +50,7 @@ export interface AdminSummary { users: number; openRequests: number; todayVisito
 export interface AdminUserRow { id: number; username: string; nickname: string; role: string; status: string; created_at: string; last_login_at: string | null; saved_count: number }
 export interface ChangeRequestRow { request_id: string; result_url: string | null; request_text: string; status: "pending" | "reviewed" | "completed" | "rejected"; admin_note: string | null; created_at: string; updated_at: string; requester_nickname: string | null; handler_nickname: string | null }
 export interface AdminContentRow { cycleIndex: number; ganjiKr: string; theme: string; themeName: string; characterName: string; tagline: string; description: string; imageKey?: string; enabled: boolean; overridden: boolean }
+export interface AdminArchetypeRow { cycleIndex: number; ganjiKr: string; animalName: string; description: string; imageKey: string; overridden: boolean }
 
 export async function submitCharacterChangeRequest(input: { resultUrl: string; requestText: string }): Promise<{ ok: true; requestId: string }> {
   const response = await fetch("/api/character-change-requests", {
@@ -116,5 +117,18 @@ export async function updateAdminContent(item: AdminContentRow): Promise<void> {
 
 export async function uploadAdminContentImage(item: AdminContentRow, file: File): Promise<string> {
   const response = await fetch(`/api/admin/content/${item.cycleIndex}/${encodeURIComponent(item.theme)}/image`, { method: "PUT", headers: { "content-type": file.type }, body: file });
+  return (await readJson<{ imageKey: string }>(response)).imageKey;
+}
+
+export async function fetchAdminArchetypes(): Promise<AdminArchetypeRow[]> {
+  return (await readJson<{ items: AdminArchetypeRow[] }>(await fetch("/api/admin/archetypes"))).items;
+}
+
+export async function updateAdminArchetype(item: AdminArchetypeRow): Promise<void> {
+  await readJson(await fetch(`/api/admin/archetypes/${item.cycleIndex}`, { method: "PATCH", headers: { "content-type": "application/json" }, body: JSON.stringify(item) }));
+}
+
+export async function uploadAdminArchetypeImage(item: AdminArchetypeRow, file: File): Promise<string> {
+  const response = await fetch(`/api/admin/archetypes/${item.cycleIndex}/image`, { method: "PUT", headers: { "content-type": file.type }, body: file });
   return (await readJson<{ imageKey: string }>(response)).imageKey;
 }
