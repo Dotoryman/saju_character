@@ -1,4 +1,5 @@
 import type { ResultViewModel } from "../shared/result";
+import { optimizeAdminImage } from "./imageUpload";
 
 interface ApiError {
   error?: string;
@@ -116,7 +117,8 @@ export async function updateAdminContent(item: AdminContentRow): Promise<void> {
 }
 
 export async function uploadAdminContentImage(item: AdminContentRow, file: File): Promise<string> {
-  const response = await fetch(`/api/admin/content/${item.cycleIndex}/${encodeURIComponent(item.theme)}/image`, { method: "PUT", headers: { "content-type": file.type }, body: file });
+  const optimized = await optimizeAdminImage(file, "character");
+  const response = await fetch(`/api/admin/content/${item.cycleIndex}/${encodeURIComponent(item.theme)}/image`, { method: "PUT", headers: { "content-type": optimized.type }, body: optimized });
   return (await readJson<{ imageKey: string }>(response)).imageKey;
 }
 
@@ -129,6 +131,7 @@ export async function updateAdminArchetype(item: AdminArchetypeRow): Promise<voi
 }
 
 export async function uploadAdminArchetypeImage(item: AdminArchetypeRow, file: File): Promise<string> {
-  const response = await fetch(`/api/admin/archetypes/${item.cycleIndex}/image`, { method: "PUT", headers: { "content-type": file.type }, body: file });
+  const optimized = await optimizeAdminImage(file, "animal");
+  const response = await fetch(`/api/admin/archetypes/${item.cycleIndex}/image`, { method: "PUT", headers: { "content-type": optimized.type }, body: optimized });
   return (await readJson<{ imageKey: string }>(response)).imageKey;
 }
