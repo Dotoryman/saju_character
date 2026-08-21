@@ -113,7 +113,7 @@ export function HomePage() {
           {error && <p className="form-error" role="alert">{error}</p>}
           <button className="button primary submit-button" disabled={isLoading} type="submit">
             <span>{isLoading ? "캐릭터를 찾는 중…" : "내 캐릭터 찾기"}</span>
-            {!isLoading && <span aria-hidden="true">→</span>}
+            {!isLoading && <span aria-hidden="true" className="submit-arrow">→</span>}
           </button>
         </form>
         <p className="privacy-note">입력한 정보는 결과 생성에만 사용하며, 공개 화면에서는 안전하게 가려집니다.</p>
