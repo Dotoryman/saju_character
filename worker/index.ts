@@ -3,6 +3,12 @@ import { getArchetype } from "../src/data/archetypes";
 import { getCharacterResults, THEMES } from "../src/data/characterMappings";
 import { CHARACTER_IMAGE_SOURCES } from "../src/data/characterImageSources.generated";
 import { ANIMAL_IMAGE_SOURCES } from "../src/data/animalImageSources.generated";
+
+const ANIMAL_IMAGE_REVISION = "20260824-2";
+
+function animalImagePath(animalName: string) {
+  return `/media/animals/${encodeURIComponent(animalName)}?v=${ANIMAL_IMAGE_REVISION}`;
+}
 import { maskBirthDate, maskNickname } from "../src/domain/privacy/mask";
 import { calculateDayPillar } from "../src/domain/saju/calculateDayPillar";
 import type { ResultViewModel } from "../src/shared/result";
@@ -308,7 +314,7 @@ async function toViewModel(row: ResultRow, env: AppEnv): Promise<ResultViewModel
       name: archetype.archetypeName,
       animal: animalName,
       description: override?.description || archetype.description,
-      imageKey: override?.image_key || `/media/animals/${encodeURIComponent(animalName)}`,
+      imageKey: override?.image_key || animalImagePath(animalName),
     },
     characters: await getManagedCharacters(row.cycle_index, env),
     user: {
@@ -708,7 +714,7 @@ async function adminArchetypes(request: Request, env: AppEnv): Promise<Response>
       ganjiKr: base.ganjiKr,
       animalName,
       description: override?.description || base.description,
-      imageKey: override?.image_key || `/media/animals/${encodeURIComponent(animalName)}`,
+      imageKey: override?.image_key || animalImagePath(animalName),
       overridden: Boolean(override),
     };
   });
