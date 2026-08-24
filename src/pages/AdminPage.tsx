@@ -60,14 +60,48 @@ function RequestMessage({ item, onSave }: { item: ChangeRequestRow; onSave: (ite
 
 function ContentEditor({ item, onSave, onUpload }: { item: AdminContentRow; onSave: (item: AdminContentRow) => Promise<void>; onUpload: (file: File) => Promise<void> }) {
   const [draft, setDraft] = useState(item);
+  const [busy, setBusy] = useState(false);
+  const [notice, setNotice] = useState("");
   useEffect(() => setDraft(item), [item]);
-  return <article className={`content-editor ${draft.enabled ? "" : "disabled"}`}><div className="content-editor-image">{draft.imageKey && <img alt={draft.characterName} src={draft.imageKey} />}<label className="image-upload">이미지 교체<input accept="image/jpeg,image/png,image/webp" type="file" onChange={(event) => { const file = event.target.files?.[0]; if (file) void onUpload(file); }} /></label></div><div className="content-editor-fields"><p><strong>{draft.ganjiKr}일주</strong><span>{draft.themeName}</span></p><label><span>캐릭터명</span><input value={draft.characterName} onChange={(event) => setDraft({ ...draft, characterName: event.target.value })} /></label><label><span>한 줄 설명</span><input value={draft.tagline} onChange={(event) => setDraft({ ...draft, tagline: event.target.value })} /></label><label><span>캐릭터 설명</span><textarea value={draft.description} onChange={(event) => setDraft({ ...draft, description: event.target.value })} /></label><div className="content-editor-actions"><label><input checked={draft.enabled} type="checkbox" onChange={(event) => setDraft({ ...draft, enabled: event.target.checked })} /> 공개</label><button className="button primary" type="button" onClick={() => void onSave(draft)}>저장</button></div></div></article>;
+
+  async function handleSave() {
+    setBusy(true); setNotice("저장하는 중…");
+    try { await onSave(draft); setNotice("저장되었습니다."); }
+    catch (caught) { setNotice(caught instanceof Error ? caught.message : "저장하지 못했습니다."); }
+    finally { setBusy(false); }
+  }
+
+  async function handleUpload(file: File) {
+    setBusy(true); setNotice("이미지를 최적화해 저장하는 중…");
+    try { await onUpload(file); setNotice("새 이미지가 저장되었습니다."); }
+    catch (caught) { setNotice(caught instanceof Error ? caught.message : "이미지를 저장하지 못했습니다."); }
+    finally { setBusy(false); }
+  }
+
+  return <article className={`content-editor ${draft.enabled ? "" : "disabled"}`}><div className="content-editor-image">{draft.imageKey && <img alt={draft.characterName} src={draft.imageKey} />}<label className="image-upload">이미지 교체<input accept="image/jpeg,image/png,image/webp" disabled={busy} type="file" onChange={(event) => { const file = event.target.files?.[0]; event.currentTarget.value = ""; if (file) void handleUpload(file); }} /></label></div><div className="content-editor-fields"><p><strong>{draft.ganjiKr}일주</strong><span>{draft.themeName}</span></p><label><span>캐릭터명</span><input value={draft.characterName} onChange={(event) => setDraft({ ...draft, characterName: event.target.value })} /></label><label><span>한 줄 설명</span><input value={draft.tagline} onChange={(event) => setDraft({ ...draft, tagline: event.target.value })} /></label><label><span>캐릭터 설명</span><textarea value={draft.description} onChange={(event) => setDraft({ ...draft, description: event.target.value })} /></label><div className="content-editor-actions"><label><input checked={draft.enabled} type="checkbox" onChange={(event) => setDraft({ ...draft, enabled: event.target.checked })} /> 공개</label><button className="button primary" disabled={busy} type="button" onClick={() => void handleSave()}>{busy ? "처리 중…" : "저장"}</button></div><p className="editor-status" aria-live="polite">{notice}</p></div></article>;
 }
 
 function ArchetypeEditor({ item, onSave, onUpload }: { item: AdminArchetypeRow; onSave: (item: AdminArchetypeRow) => Promise<void>; onUpload: (file: File) => Promise<void> }) {
   const [draft, setDraft] = useState(item);
+  const [busy, setBusy] = useState(false);
+  const [notice, setNotice] = useState("");
   useEffect(() => setDraft(item), [item]);
-  return <article className="content-editor animal-editor"><div className="content-editor-image animal-editor-image">{draft.imageKey && <img alt={draft.animalName} src={draft.imageKey} />}<label className="image-upload">이미지 교체<input accept="image/jpeg,image/png,image/webp" type="file" onChange={(event) => { const file = event.target.files?.[0]; if (file) void onUpload(file); }} /></label></div><div className="content-editor-fields"><p><strong>{draft.ganjiKr}일주</strong><span>대표동물</span></p><label><span>동물명</span><input value={draft.animalName} onChange={(event) => setDraft({ ...draft, animalName: event.target.value })} /></label><label><span>일주 설명</span><textarea value={draft.description} onChange={(event) => setDraft({ ...draft, description: event.target.value })} /></label><div className="content-editor-actions"><span /><button className="button primary" type="button" onClick={() => void onSave(draft)}>저장</button></div></div></article>;
+
+  async function handleSave() {
+    setBusy(true); setNotice("저장하는 중…");
+    try { await onSave(draft); setNotice("저장되었습니다."); }
+    catch (caught) { setNotice(caught instanceof Error ? caught.message : "저장하지 못했습니다."); }
+    finally { setBusy(false); }
+  }
+
+  async function handleUpload(file: File) {
+    setBusy(true); setNotice("이미지를 최적화해 저장하는 중…");
+    try { await onUpload(file); setNotice("새 이미지가 저장되었습니다."); }
+    catch (caught) { setNotice(caught instanceof Error ? caught.message : "이미지를 저장하지 못했습니다."); }
+    finally { setBusy(false); }
+  }
+
+  return <article className="content-editor animal-editor"><div className="content-editor-image animal-editor-image">{draft.imageKey && <img alt={draft.animalName} src={draft.imageKey} />}<label className="image-upload">이미지 교체<input accept="image/jpeg,image/png,image/webp" disabled={busy} type="file" onChange={(event) => { const file = event.target.files?.[0]; event.currentTarget.value = ""; if (file) void handleUpload(file); }} /></label></div><div className="content-editor-fields"><p><strong>{draft.ganjiKr}일주</strong><span>대표동물</span></p><label><span>동물명</span><input value={draft.animalName} onChange={(event) => setDraft({ ...draft, animalName: event.target.value })} /></label><label><span>일주 설명</span><textarea value={draft.description} onChange={(event) => setDraft({ ...draft, description: event.target.value })} /></label><div className="content-editor-actions"><span /><button className="button primary" disabled={busy} type="button" onClick={() => void handleSave()}>{busy ? "처리 중…" : "저장"}</button></div><p className="editor-status" aria-live="polite">{notice}</p></div></article>;
 }
 
 function formatDate(value: string) { return new Intl.DateTimeFormat("ko-KR", { dateStyle: "medium", timeStyle: "short" }).format(new Date(value)); }

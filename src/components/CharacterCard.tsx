@@ -1,13 +1,6 @@
 import { useState } from "react";
 import type { CharacterResult } from "../data/characterMappings";
 
-const SYMBOLS: Record<CharacterResult["theme"], string> = {
-  "one-piece": "☠",
-  naruto: "忍",
-  inuyasha: "月",
-  ghibli: "風",
-};
-
 export function CharacterCard({ character, index }: { character: CharacterResult; index: number }) {
   const [imageFailed, setImageFailed] = useState(false);
 
@@ -23,8 +16,7 @@ export function CharacterCard({ character, index }: { character: CharacterResult
           />
         ) : (
           <div className="character-image-fallback" aria-hidden="true">
-            <span>{SYMBOLS[character.theme]}</span>
-            <small>{character.characterName}</small>
+            <small>이미지를 불러오지 못했습니다</small>
           </div>
         )}
         <span className="image-label">CHARACTER MATCH</span>
