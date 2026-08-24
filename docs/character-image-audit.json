@@ -989,13 +989,22 @@
     ]
   },
   "inuyasha|셋쇼마루": {
-    "url": "https://s4.anilist.co/file/anilistcdn/character/large/28298.jpg",
-    "sourceName": "Sesshomaru no Haha",
-    "sourceId": 28298,
+    "url": "https://s4.anilist.co/file/anilistcdn/character/large/b1358-oR7bIGfc5pnX.png",
+    "sourceName": "Sesshoumaru",
+    "sourceId": 1358,
     "media": [
+      "InuYasha",
+      "InuYasha the Movie 4: Fire on the Mystic Island",
+      "InuYasha the Movie 3: Swords of an Honorable Ruler",
+      "InuYasha the Movie: Affections Touching Across Time",
       "InuYasha: The Final Act",
-      "InuYasha"
-    ]
+      "InuYasha",
+      "Inuyasha Special",
+      "Yashahime: Princess Half-Demon",
+      "Yashahime: Princess Half-Demon - The Second Act",
+      "Yashahime: Princess Half-Demon"
+    ],
+    "verifiedOverride": true
   },
   "inuyasha|싯포": {
     "url": "https://s4.anilist.co/file/anilistcdn/character/large/b1357-q81pBzC7ynld.jpg",
@@ -1102,12 +1111,13 @@
     ]
   },
   "inuyasha|지넨지": {
-    "url": "https://s4.anilist.co/file/anilistcdn/character/large/64651.jpg",
+    "url": "https://static.wikia.nocookie.net/inuyasha/images/5/53/Jinenji.png/revision/latest?cb=20250318215026",
     "sourceName": "Jinenji",
-    "sourceId": 64651,
+    "sourceId": null,
     "media": [
       "InuYasha"
-    ]
+    ],
+    "verifiedOverride": true
   },
   "inuyasha|반코츠": {
     "url": "https://s4.anilist.co/file/anilistcdn/character/large/1899.jpg",

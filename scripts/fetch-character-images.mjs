@@ -18,7 +18,7 @@ const groups = {
   },
   inuyasha: {
     "고신키": "Goshinki", "나라쿠": "Naraku", "류코츠세이": "Ryukotsusei", "링": "Rin",
-    "묘가": "Myoga", "미로쿠": "Miroku", "산고": "Sango", "셋쇼마루": "Sesshomaru",
+    "묘가": "Myoga", "미로쿠": "Miroku", "산고": "Sango", "셋쇼마루": "Sesshoumaru",
     "싯포": "Shippo", "이누야샤": "Inuyasha", "쟈코츠": "Jakotsu",
     "카고메": "Kagome Higurashi", "카구라": "Kagura", "카에데": "Kaede", "칸나": "Kanna",
     "코우가": "Kouga", "키쿄우": "Kikyo", "호센키": "Housenki", "투아왕": "Touga",
@@ -108,6 +108,8 @@ const verifiedOverrides = {
   "inuyasha|카에데": { url: "https://s4.anilist.co/file/anilistcdn/character/large/b1360-nvgYPaUEMeG6.jpg", sourceName: "Kaede", sourceId: 1360, media: ["InuYasha"] },
   "inuyasha|코우가": { url: "https://s4.anilist.co/file/anilistcdn/character/large/1371.jpg", sourceName: "Koga", sourceId: 1371, media: ["InuYasha"] },
   "inuyasha|아야메": { url: "https://s4.anilist.co/file/anilistcdn/character/large/1372.jpg", sourceName: "Ayame", sourceId: 1372, media: ["InuYasha"] },
+  "inuyasha|셋쇼마루": { url: "https://s4.anilist.co/file/anilistcdn/character/large/b1358-oR7bIGfc5pnX.png", sourceName: "Sesshoumaru", sourceId: 1358, media: ["InuYasha"] },
+  "inuyasha|지넨지": { url: "https://static.wikia.nocookie.net/inuyasha/images/5/53/Jinenji.png/revision/latest?cb=20250318215026", sourceName: "Jinenji", sourceId: null, media: ["InuYasha"] },
   "inuyasha|호센키": { url: "https://static.wikia.nocookie.net/inuyasha/images/6/6c/Hosenki.jpg/revision/latest?cb=20240522135956", sourceName: "Hosenki", sourceId: null, media: ["InuYasha"] },
   "inuyasha|투아왕": { url: "https://s4.anilist.co/file/anilistcdn/character/large/3167.jpg", sourceName: "Inu no Taisho", sourceId: 3167, media: ["InuYasha the Movie 3: Swords of an Honorable Ruler"] },
   "one-piece|킹": { url: "https://s4.anilist.co/file/anilistcdn/character/large/b130416-viDCE52yqITx.png", sourceName: "King", sourceId: 130416, media: ["ONE PIECE"] },

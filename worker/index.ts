@@ -190,7 +190,12 @@ async function getCharacterImage(pathname: string, env: Env): Promise<Response> 
     return new Response(cached.body, { headers });
   }
 
-  const upstream = await fetch(sourceUrl, { headers: { accept: "image/avif,image/webp,image/*" } });
+  const upstream = await fetch(sourceUrl, {
+    headers: {
+      accept: "image/avif,image/webp,image/*",
+      "user-agent": "SAJUSAJU/0.5.1 (https://sajusaju.cloud)",
+    },
+  });
   if (!upstream.ok) return new Response("Image unavailable", { status: 502 });
   const bytes = await upstream.arrayBuffer();
   const contentType = upstream.headers.get("content-type") || "image/jpeg";

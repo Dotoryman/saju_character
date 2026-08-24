@@ -49,5 +49,8 @@ async function worker() {
   }
 }
 
-await Promise.all(Array.from({ length: 6 }, () => worker()));
+// Wrangler's R2 uploader is deliberately run sequentially. Parallel CLI processes
+// occasionally uploaded a neighbouring temporary file under the wrong object key.
+// A full refresh is slower this way, but each character keeps its verified image.
+await worker();
 console.log(`Uploaded ${completed} character image objects to R2.`);
