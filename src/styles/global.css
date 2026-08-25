@@ -606,8 +606,8 @@ main { flex: 1; }
 .animal-ranking img { width: 42px; height: 42px; border-radius: 12px; object-fit: cover; background: var(--paper-deep); }
 .character-stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
 .character-stat-grid article { min-width: 0; padding: 11px 11px 15px; display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: 18px; background: rgba(255,255,255,.42); }
-.character-stat-grid figure { aspect-ratio: 4 / 3; margin: 0 0 13px; overflow: hidden; border-radius: 12px; background: var(--paper-deep); }
-.character-stat-grid img { width: 100%; height: 100%; display: block; object-fit: cover; object-position: center 18%; }
+.character-stat-grid figure { aspect-ratio: 2 / 3; margin: 0 0 13px; overflow: hidden; border-radius: 12px; background: var(--paper-deep); }
+.character-stat-grid img { width: 100%; height: 100%; display: block; object-fit: contain; object-position: center; }
 .character-stat-grid span { overflow: hidden; color: var(--accent); font-family: var(--font-latin); font-size: 8px; font-weight: 800; text-overflow: ellipsis; white-space: nowrap; }
 .character-stat-grid strong { margin: 5px 0 2px; font-size: 15px; }
 .character-stat-grid small { color: var(--muted); font-size: 10px; }
