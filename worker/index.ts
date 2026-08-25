@@ -114,6 +114,32 @@ function json(data: unknown, init: ResponseInit = {}): Response {
   return new Response(JSON.stringify(data), { ...init, headers });
 }
 
+async function cachedPublicResponse(
+  request: Request,
+  ctx: ExecutionContext,
+  ttlSeconds: number,
+  load: () => Promise<Response>,
+): Promise<Response> {
+  const cacheKey = new Request(request.url, { method: "GET" });
+  const cache = await caches.open("sajusaju-public-v1");
+  const cached = await cache.match(cacheKey).catch(() => undefined);
+  if (cached) return cached;
+
+  const loaded = await load();
+  if (!loaded.ok) return loaded;
+  const headers = new Headers(loaded.headers);
+  headers.set("cache-control", `public, max-age=${ttlSeconds}`);
+  const response = new Response(loaded.body, { status: loaded.status, statusText: loaded.statusText, headers });
+  ctx.waitUntil(cache.put(cacheKey, response.clone()).catch((error: unknown) => {
+    console.error(JSON.stringify({
+      event: "cache_put_failed",
+      path: new URL(request.url).pathname,
+      message: error instanceof Error ? error.message : "Unknown error",
+    }));
+  }));
+  return response;
+}
+
 function withCookie(response: Response, cookie: string): Response {
   const headers = new Headers(response.headers);
   headers.append("set-cookie", cookie);
@@ -259,12 +285,20 @@ async function getAnimalImage(pathname: string, env: Env): Promise<Response> {
 }
 
 interface ContentOverrideRow {
+  cycle_index: number;
   theme_slug: string;
   character_name: string | null;
   tagline: string | null;
   description: string | null;
   image_key: string | null;
   enabled: number;
+}
+
+interface ArchetypeOverrideRow {
+  cycle_index: number;
+  animal_name: string | null;
+  description: string | null;
+  image_key: string | null;
 }
 
 async function getUploadedImage(pathname: string, env: AppEnv): Promise<Response> {
@@ -279,32 +313,26 @@ async function getUploadedImage(pathname: string, env: AppEnv): Promise<Response
   return new Response(object.body, { headers });
 }
 
-async function getManagedCharacters(cycleIndex: number, env: AppEnv) {
-  const base = getCharacterResults(cycleIndex);
-  const { results } = await env.DB.prepare(
-    "SELECT theme_slug, character_name, tagline, description, image_key, enabled FROM content_overrides WHERE cycle_index = ?",
-  ).bind(cycleIndex).all<ContentOverrideRow>();
-  const overrides = new Map(results.map((item) => [item.theme_slug, item]));
-  return base.flatMap((character) => {
-    const override = overrides.get(character.theme);
-    if (override?.enabled === 0) return [];
-    if (!override) return [character];
+function buildViewModel(
+  row: ResultRow,
+  characterOverrides: Map<string, ContentOverrideRow>,
+  archetypeOverrides: Map<number, ArchetypeOverrideRow>,
+): ResultViewModel {
+  const archetype = getArchetype(row.cycle_index);
+  const override = archetypeOverrides.get(row.cycle_index);
+  const animalName = override?.animal_name || archetype.animalName;
+  const characters = getCharacterResults(row.cycle_index).flatMap((character) => {
+    const characterOverride = characterOverrides.get(`${row.cycle_index}|${character.theme}`);
+    if (characterOverride?.enabled === 0) return [];
+    if (!characterOverride) return [character];
     return [{
       ...character,
-      characterName: override.character_name || character.characterName,
-      tagline: override.tagline || character.tagline,
-      description: override.description || character.description,
-      imageKey: override.image_key || character.imageKey,
+      characterName: characterOverride.character_name || character.characterName,
+      tagline: characterOverride.tagline || character.tagline,
+      description: characterOverride.description || character.description,
+      imageKey: characterOverride.image_key || character.imageKey,
     }];
   });
-}
-
-async function toViewModel(row: ResultRow, env: AppEnv): Promise<ResultViewModel> {
-  const archetype = getArchetype(row.cycle_index);
-  const override = await env.DB.prepare(
-    "SELECT animal_name, description, image_key FROM archetype_overrides WHERE cycle_index = ?",
-  ).bind(row.cycle_index).first<{ animal_name: string | null; description: string | null; image_key: string | null }>();
-  const animalName = override?.animal_name || archetype.animalName;
   return {
     resultId: row.public_id,
     ganji: archetype.ganji,
@@ -316,13 +344,38 @@ async function toViewModel(row: ResultRow, env: AppEnv): Promise<ResultViewModel
       description: override?.description || archetype.description,
       imageKey: override?.image_key || animalImagePath(animalName),
     },
-    characters: await getManagedCharacters(row.cycle_index, env),
+    characters,
     user: {
       displayNickname: maskNickname(row.nickname),
       displayBirthDate: maskBirthDate(row.birth_date),
     },
     createdAt: row.created_at,
   };
+}
+
+async function toViewModels(rows: ResultRow[], env: AppEnv): Promise<ResultViewModel[]> {
+  if (rows.length === 0) return [];
+  const cycleIndexes = [...new Set(rows.map((row) => row.cycle_index))];
+  const placeholders = cycleIndexes.map(() => "?").join(", ");
+  const [characterQuery, archetypeQuery] = await Promise.all([
+    env.DB.prepare(
+      `SELECT cycle_index, theme_slug, character_name, tagline, description, image_key, enabled
+       FROM content_overrides WHERE cycle_index IN (${placeholders})`,
+    ).bind(...cycleIndexes).all<ContentOverrideRow>(),
+    env.DB.prepare(
+      `SELECT cycle_index, animal_name, description, image_key
+       FROM archetype_overrides WHERE cycle_index IN (${placeholders})`,
+    ).bind(...cycleIndexes).all<ArchetypeOverrideRow>(),
+  ]);
+  const characterOverrides = new Map(characterQuery.results.map((item) => [`${item.cycle_index}|${item.theme_slug}`, item]));
+  const archetypeOverrides = new Map(archetypeQuery.results.map((item) => [item.cycle_index, item]));
+  return rows.map((row) => buildViewModel(row, characterOverrides, archetypeOverrides));
+}
+
+async function toViewModel(row: ResultRow, env: AppEnv): Promise<ResultViewModel> {
+  const result = (await toViewModels([row], env))[0];
+  if (!result) throw new Error("결과 데이터를 구성하지 못했습니다.");
+  return result;
 }
 
 async function createResult(request: Request, env: Env): Promise<Response> {
@@ -402,9 +455,6 @@ async function getResult(publicId: string, env: Env): Promise<Response> {
 
   if (!row) return json({ error: "결과를 찾을 수 없습니다." }, { status: 404 });
 
-  await env.DB.prepare("UPDATE results SET view_count = view_count + 1 WHERE public_id = ?")
-    .bind(publicId)
-    .run();
   return json(await toViewModel(row, env));
 }
 
@@ -459,7 +509,7 @@ async function getFeed(url: URL, env: Env): Promise<Response> {
   const page = results.slice(0, limit);
 
   return json({
-    items: await Promise.all(page.map((row) => toViewModel(row, env))),
+    items: await toViewModels(page, env),
     nextCursor: hasNext ? page.at(-1)?.created_at ?? null : null,
   });
 }
@@ -532,16 +582,21 @@ async function bootstrapAdmin(request: Request, env: AppEnv): Promise<Response> 
 
 async function trackVisitor(request: Request, env: AppEnv): Promise<Response> {
   const cookie = request.headers.get("cookie") ?? "";
-  const existing = /(?:^|;\s*)saju_visitor=([^;]+)/.exec(cookie)?.[1];
-  const visitorId = existing ? decodeURIComponent(existing) : crypto.randomUUID();
   const date = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Seoul", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
-  const createdAt = new Date().toISOString();
-  await env.DB.prepare("INSERT OR IGNORE INTO daily_visitors (visit_date, visitor_hash, created_at) VALUES (?, ?, ?)")
-    .bind(date, await sha256(visitorId), createdAt).run();
-  const count = await env.DB.prepare("SELECT COUNT(*) AS count FROM daily_visitors WHERE visit_date = ?").bind(date).first<{ count: number }>();
-  const response = json({ count: count?.count ?? 0 });
-  if (existing) return response;
-  return withCookie(response, `saju_visitor=${encodeURIComponent(visitorId)}; Path=/; Secure; SameSite=Lax; Max-Age=31536000`);
+  const visitedToday = /(?:^|;\s*)saju_visitor_day=([^;]+)/.exec(cookie)?.[1] === date;
+  const now = new Date().toISOString();
+  if (!visitedToday) {
+    await env.DB.prepare(
+      `INSERT INTO daily_visitor_counts (visit_date, visitor_count, updated_at) VALUES (?, 1, ?)
+       ON CONFLICT(visit_date) DO UPDATE SET visitor_count = visitor_count + 1, updated_at = excluded.updated_at`,
+    ).bind(date, now).run();
+  }
+  const count = await env.DB.prepare(
+    "SELECT visitor_count FROM daily_visitor_counts WHERE visit_date = ?",
+  ).bind(date).first<{ visitor_count: number }>();
+  const response = json({ count: count?.visitor_count ?? 0 });
+  if (visitedToday) return response;
+  return withCookie(response, `saju_visitor_day=${date}; Path=/; Secure; SameSite=Lax; Max-Age=172800`);
 }
 
 async function getSavedResults(request: Request, env: AppEnv): Promise<Response> {
@@ -550,7 +605,7 @@ async function getSavedResults(request: Request, env: AppEnv): Promise<Response>
   const { results } = await env.DB.prepare(
     "SELECT public_id, nickname, birth_date, cycle_index, created_at FROM results WHERE user_id = ? AND is_saved = 1 ORDER BY created_at DESC LIMIT 50",
   ).bind(auth.id).all<ResultRow>();
-  return json({ items: await Promise.all(results.map((row) => toViewModel(row, env))) });
+  return json({ items: await toViewModels(results, env) });
 }
 
 async function changePassword(request: Request, env: AppEnv): Promise<Response> {
@@ -581,7 +636,7 @@ async function adminSummary(request: Request, env: AppEnv): Promise<Response> {
   const [users, requests, visitors] = await env.DB.batch([
     env.DB.prepare("SELECT COUNT(*) AS count FROM users"),
     env.DB.prepare("SELECT COUNT(*) AS count FROM character_change_requests WHERE status IN ('pending', 'reviewed')"),
-    env.DB.prepare("SELECT COUNT(*) AS count FROM daily_visitors WHERE visit_date = ?").bind(today),
+    env.DB.prepare("SELECT visitor_count AS count FROM daily_visitor_counts WHERE visit_date = ?").bind(today),
   ]);
   return json({
     users: (users?.results[0] as { count: number } | undefined)?.count ?? 0,
@@ -759,7 +814,7 @@ async function uploadAdminArchetypeImage(request: Request, cycleIndex: number, e
   return json({ ok: true, imageKey });
 }
 
-async function route(request: Request, env: AppEnv): Promise<Response> {
+async function route(request: Request, env: AppEnv, ctx: ExecutionContext): Promise<Response> {
   const url = new URL(request.url);
   const pathname = url.pathname;
 
@@ -779,7 +834,7 @@ async function route(request: Request, env: AppEnv): Promise<Response> {
 
   const resultPageMatch = /^\/result\/([A-Za-z0-9]+)$/.exec(pathname);
   if (resultPageMatch?.[1] && request.method === "GET") {
-    return getResultPage(request, resultPageMatch[1], env);
+    return cachedPublicResponse(request, ctx, 60, () => getResultPage(request, resultPageMatch[1]!, env));
   }
 
   if (pathname === "/api/health" && request.method === "GET") {
@@ -825,11 +880,11 @@ async function route(request: Request, env: AppEnv): Promise<Response> {
     return createCharacterChangeRequest(request, env);
   }
   if (pathname === "/api/feed" && request.method === "GET") {
-    return getFeed(url, env);
+    return cachedPublicResponse(request, ctx, 30, () => getFeed(url, env));
   }
   const resultMatch = /^\/api\/results\/([A-Za-z0-9]+)$/.exec(pathname);
   if (resultMatch?.[1] && request.method === "GET") {
-    return getResult(resultMatch[1], env);
+    return cachedPublicResponse(request, ctx, 60, () => getResult(resultMatch[1]!, env));
   }
   const shareMatch = /^\/api\/results\/([A-Za-z0-9]+)\/share$/.exec(pathname);
   if (shareMatch?.[1] && request.method === "POST") {
@@ -844,9 +899,9 @@ async function route(request: Request, env: AppEnv): Promise<Response> {
 }
 
 export default {
-  async fetch(request, env): Promise<Response> {
+  async fetch(request, env, ctx): Promise<Response> {
     try {
-      return await route(request, env);
+      return await route(request, env, ctx);
     } catch (error) {
       console.error(JSON.stringify({
         event: "request_failed",
