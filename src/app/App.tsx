@@ -3,6 +3,7 @@ import { AboutPage } from "../pages/AboutPage";
 import { ExplorePage } from "../pages/ExplorePage";
 import { HomePage } from "../pages/HomePage";
 import { ResultPage } from "../pages/ResultPage";
+import { StatisticsPage } from "../pages/StatisticsPage";
 import { AccountPage } from "../pages/AccountPage";
 import { AdminPage } from "../pages/AdminPage";
 import { useAuth } from "../features/auth/AuthContext";
@@ -19,6 +20,7 @@ export function App() {
         </Link>
         <nav aria-label="주요 메뉴">
           <NavLink to="/explore">다른 사주 둘러보기</NavLink>
+          <NavLink to="/statistics">통계</NavLink>
           {!loading && (user ? <NavLink to="/account">{user.nickname}</NavLink> : <button className="header-login" type="button" onClick={openAuth}>로그인</button>)}
           <NavLink to="/about">소개</NavLink>
         </nav>
@@ -29,6 +31,7 @@ export function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/result/:publicId" element={<ResultPage />} />
           <Route path="/explore" element={<ExplorePage />} />
+          <Route path="/statistics" element={<StatisticsPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/account" element={<AccountPage />} />
           <Route path="/admin" element={<AdminPage />} />

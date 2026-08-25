@@ -3,6 +3,7 @@ import type { Element } from "../domain/saju/constants";
 
 export interface ResultViewModel {
   resultId: string;
+  cycleIndex: number;
   ganji: string;
   ganjiKr: string;
   element: Element;

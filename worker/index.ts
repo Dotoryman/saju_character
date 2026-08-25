@@ -11,6 +11,11 @@ function animalImagePath(animalName: string) {
 }
 import { maskBirthDate, maskNickname } from "../src/domain/privacy/mask";
 import { calculateDayPillar } from "../src/domain/saju/calculateDayPillar";
+import {
+  buildStatistics,
+  type DailyCountRow,
+  type PillarCountRow,
+} from "../src/domain/statistics/buildStatistics";
 import type { ResultViewModel } from "../src/shared/result";
 import {
   clearSessionCookie,
@@ -335,6 +340,7 @@ function buildViewModel(
   });
   return {
     resultId: row.public_id,
+    cycleIndex: row.cycle_index,
     ganji: archetype.ganji,
     ganjiKr: archetype.ganjiKr,
     element: archetype.element,
@@ -378,7 +384,7 @@ async function toViewModel(row: ResultRow, env: AppEnv): Promise<ResultViewModel
   return result;
 }
 
-async function createResult(request: Request, env: Env): Promise<Response> {
+async function createResult(request: Request, env: AppEnv): Promise<Response> {
   const body: unknown = await request.json().catch(() => null);
   const parsed = createResultSchema.safeParse(body);
   if (!parsed.success) {
@@ -402,12 +408,21 @@ async function createResult(request: Request, env: Env): Promise<Response> {
 
   const authUser = await getAuthUser(request, env.DB);
   const shouldSave = authUser ? 1 : 0;
-  await env.DB.prepare(
-    `INSERT INTO results (public_id, nickname, birth_date, cycle_index, is_public, created_at, updated_at, user_id, is_saved, profile_label)
-     VALUES (?, ?, ?, ?, 1, ?, ?, ?, ?, ?)`,
-  )
-    .bind(publicId, parsed.data.nickname, parsed.data.birthDate, pillar.cycleIndex, createdAt, createdAt, authUser?.id ?? null, shouldSave, authUser ? parsed.data.nickname : null)
-    .run();
+  const statDate = formatKoreaDate(new Date(createdAt));
+  await env.DB.batch([
+    env.DB.prepare(
+      `INSERT INTO results (public_id, nickname, birth_date, cycle_index, is_public, created_at, updated_at, user_id, is_saved, profile_label)
+       VALUES (?, ?, ?, ?, 1, ?, ?, ?, ?, ?)`,
+    ).bind(publicId, parsed.data.nickname, parsed.data.birthDate, pillar.cycleIndex, createdAt, createdAt, authUser?.id ?? null, shouldSave, authUser ? parsed.data.nickname : null),
+    env.DB.prepare(
+      `INSERT INTO daily_result_stats (stat_date, result_count, updated_at) VALUES (?, 1, ?)
+       ON CONFLICT(stat_date) DO UPDATE SET result_count = result_count + 1, updated_at = excluded.updated_at`,
+    ).bind(statDate, createdAt),
+    env.DB.prepare(
+      `INSERT INTO pillar_result_stats (cycle_index, result_count, updated_at) VALUES (?, 1, ?)
+       ON CONFLICT(cycle_index) DO UPDATE SET result_count = result_count + 1, updated_at = excluded.updated_at`,
+    ).bind(pillar.cycleIndex, createdAt),
+  ]);
 
   return json(
     await toViewModel({
@@ -512,6 +527,44 @@ async function getFeed(url: URL, env: Env): Promise<Response> {
     items: await toViewModels(page, env),
     nextCursor: hasNext ? page.at(-1)?.created_at ?? null : null,
   });
+}
+
+async function getStatistics(env: AppEnv): Promise<Response> {
+  const today = formatKoreaDate(new Date());
+  const startDate = shiftIsoDate(today, -29);
+  const [pillarQuery, dailyQuery, visitorQuery] = await env.DB.batch([
+    env.DB.prepare("SELECT cycle_index, result_count FROM pillar_result_stats ORDER BY cycle_index"),
+    env.DB.prepare(
+      "SELECT stat_date, result_count FROM daily_result_stats WHERE stat_date >= ? ORDER BY stat_date",
+    ).bind(startDate),
+    env.DB.prepare("SELECT visitor_count FROM daily_visitor_counts WHERE visit_date = ? LIMIT 1").bind(today),
+  ]);
+  if (!pillarQuery || !dailyQuery || !visitorQuery) throw new Error("통계 집계 결과를 불러오지 못했습니다.");
+  const visitors = visitorQuery.results[0] as { visitor_count?: number } | undefined;
+  const pillarCounts = pillarQuery.results.map((row) => {
+    const value = row as Record<string, unknown>;
+    return { cycle_index: Number(value.cycle_index), result_count: Number(value.result_count) };
+  });
+  const dailyCounts = dailyQuery.results.map((row) => {
+    const value = row as Record<string, unknown>;
+    return { stat_date: String(value.stat_date), result_count: Number(value.result_count) };
+  });
+  return json(buildStatistics({
+    pillarCounts: pillarCounts satisfies PillarCountRow[],
+    dailyCounts: dailyCounts satisfies DailyCountRow[],
+    today,
+    todayVisitors: Number(visitors?.visitor_count) || 0,
+  }));
+}
+
+function formatKoreaDate(date: Date) {
+  return new Date(date.getTime() + 9 * 60 * 60 * 1000).toISOString().slice(0, 10);
+}
+
+function shiftIsoDate(date: string, days: number) {
+  const shifted = new Date(`${date}T00:00:00Z`);
+  shifted.setUTCDate(shifted.getUTCDate() + days);
+  return shifted.toISOString().slice(0, 10);
 }
 
 async function signup(request: Request, env: AppEnv): Promise<Response> {
@@ -839,6 +892,9 @@ async function route(request: Request, env: AppEnv, ctx: ExecutionContext): Prom
 
   if (pathname === "/api/health" && request.method === "GET") {
     return json({ ok: true, environment: env.ENVIRONMENT });
+  }
+  if (pathname === "/api/statistics" && request.method === "GET") {
+    return cachedPublicResponse(request, ctx, 300, () => getStatistics(env));
   }
   if (pathname === "/api/auth/signup" && request.method === "POST") return signup(request, env);
   if (pathname === "/api/auth/login" && request.method === "POST") return login(request, env);

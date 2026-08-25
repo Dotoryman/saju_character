@@ -1,20 +1,28 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { createShareImage, shareImageFileName } from "../features/share/createShareImage";
 import { downloadImage } from "../features/share/downloadImage";
 import { canUseKakaoShare, shareWithKakao } from "../features/share/kakaoShare";
-import { nativeSaveImage, nativeShareImage } from "../features/share/nativeShare";
-import { trackShare } from "../lib/api";
+import { canShareImageFiles, nativeSaveImage, nativeShareImage, nativeShareLink } from "../features/share/nativeShare";
+import { fetchStatistics, trackShare } from "../lib/api";
 import type { ResultViewModel } from "../shared/result";
+import type { StatisticsPillarRow } from "../shared/statistics";
 import { CharacterCard } from "./CharacterCard";
 
 export function ResultView({ result }: { result: ResultViewModel }) {
   const [shareStatus, setShareStatus] = useState("");
   const [isSharing, setIsSharing] = useState(false);
   const [animalImageFailed, setAnimalImageFailed] = useState(false);
+  const [pillarStatistic, setPillarStatistic] = useState<StatisticsPillarRow | null>(null);
   const prefersNativeSave = typeof navigator !== "undefined" && (
     navigator.maxTouchPoints > 0 || /Android|iPhone|iPad/i.test(navigator.userAgent)
   );
+
+  useEffect(() => {
+    void fetchStatistics().then((statistics) => {
+      setPillarStatistic(statistics.pillars.find((pillar) => pillar.cycleIndex === result.cycleIndex) ?? null);
+    }).catch(() => setPillarStatistic(null));
+  }, [result.cycleIndex]);
 
   async function makeShareFile(): Promise<{ blob: Blob; file: File }> {
     const blob = await createShareImage(result);
@@ -46,17 +54,22 @@ export function ResultView({ result }: { result: ResultViewModel }) {
 
   async function shareResult() {
     setIsSharing(true);
-    setShareStatus("공유 이미지를 만드는 중…");
+    setShareStatus("공유 화면을 준비하는 중…");
     try {
-      const { blob, file } = await makeShareFile();
       const text = `나는 ${result.ganjiKr}일주, 대표 동물은 ${result.archetype.animal}입니다.`;
-      const shared = await nativeShareImage(file, window.location.href, text);
-      if (!shared) {
-        downloadImage(blob, file.name);
-        setShareStatus("공유 기능이 지원되지 않아 PNG를 저장했습니다.");
-      } else {
-        setShareStatus("공유 화면을 열었습니다.");
-      }
+      const shared = canShareImageFiles()
+        ? await makeShareFile().then(({ file }) => nativeShareImage(file, window.location.href, text))
+        : await nativeShareLink(window.location.href, text);
+      if (shared === "unsupported") {
+        try {
+          await navigator.clipboard.writeText(window.location.href);
+          setShareStatus("공유 기능을 사용할 수 없어 결과 링크를 복사했습니다.");
+        } catch {
+          setShareStatus("이 브라우저에서는 공유할 수 없습니다. 주소창의 링크를 복사해 주세요.");
+        }
+      } else if (shared === "link") {
+        setShareStatus("이미지 공유를 지원하지 않는 브라우저라 결과 링크로 공유합니다.");
+      } else setShareStatus("결과 이미지 공유 화면을 열었습니다.");
       await recordShare();
     } catch (caught) {
       if (caught instanceof DOMException && caught.name === "AbortError") setShareStatus("");
@@ -101,6 +114,17 @@ export function ResultView({ result }: { result: ResultViewModel }) {
           </figure>
         </div>
       </section>
+
+      {pillarStatistic && (
+        <aside className="result-statistic" aria-label="내 일주 통계">
+          <div>
+            <p className="eyebrow">MY PLACE IN SAJUSAJU</p>
+            <strong>지금까지 {result.ganjiKr}일주는 <em>{pillarStatistic.rank}번째</em>로 많이 나왔어요.</strong>
+            <span>전체 결과의 {pillarStatistic.percentage}% · 같은 일주 {pillarStatistic.count}개</span>
+          </div>
+          <Link to="/statistics">전체 통계 보기 <span aria-hidden="true">→</span></Link>
+        </aside>
+      )}
 
       <section className="character-section" id="characters" aria-labelledby="character-title">
         <div className="section-heading">

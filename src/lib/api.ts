@@ -1,4 +1,5 @@
 import type { ResultViewModel } from "../shared/result";
+import type { StatisticsViewModel } from "../shared/statistics";
 import { optimizeAdminImage } from "./imageUpload";
 
 interface ApiError {
@@ -33,6 +34,10 @@ export async function fetchFeed(cursor?: string): Promise<FeedResponse> {
   const query = new URLSearchParams({ limit: "12" });
   if (cursor) query.set("cursor", cursor);
   return readJson<FeedResponse>(await fetch(`/api/feed?${query}`));
+}
+
+export async function fetchStatistics(): Promise<StatisticsViewModel> {
+  return readJson<StatisticsViewModel>(await fetch("/api/statistics"));
 }
 
 export async function trackShare(publicId: string): Promise<void> {
