@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type CSSProperties } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { fetchStatistics } from "../lib/api";
 import type { StatisticsViewModel } from "../shared/statistics";
@@ -23,37 +23,8 @@ export function StatisticsPage() {
   if (error) return <div className="state-page"><h1>{error}</h1><Link className="button primary" to="/">메인으로 가기</Link></div>;
   if (!statistics) return <div className="state-page"><div className="loading-mark">統</div><p>통계를 정리하고 있습니다.</p></div>;
 
-  const maxDaily = Math.max(1, ...statistics.daily.map((point) => point.count));
-  const maxPillar = Math.max(1, ...statistics.pillars.map((pillar) => pillar.count));
-
   return (
     <div className="statistics-page">
-      <div className="statistics-intro">
-        <p className="eyebrow">SAJUSAJU ARCHIVE</p>
-        <h1>사주사주<br />통계관</h1>
-        <p>개인정보는 제외하고, 지금까지 만들어진 결과의 흐름만 모았습니다.</p>
-      </div>
-
-      <section className="statistics-summary" aria-label="주요 통계">
-        <SummaryCard label="전체 결과" value={statistics.summary.totalResults} unit="개" />
-        <SummaryCard label="오늘 생성" value={statistics.summary.todayResults} unit="개" />
-        <SummaryCard label="오늘 방문" value={statistics.summary.todayVisitors} unit="명" />
-        <SummaryCard label="등장한 일주" value={statistics.summary.representedPillars} unit="/ 60" />
-      </section>
-
-      <section className="statistics-panel trend-panel" aria-labelledby="trend-title">
-        <PanelHeading eyebrow="LAST 30 DAYS" title="최근 결과 생성 흐름" description="최근 30일 동안 하루에 만들어진 결과 수입니다." id="trend-title" />
-        <div className="daily-chart" role="img" aria-label="최근 30일 결과 생성 막대 그래프">
-          {statistics.daily.map((point, index) => (
-            <div className="daily-column" key={point.date} title={`${formatDate(point.date)} · ${point.count}개`}>
-              <span className="daily-count">{point.count || ""}</span>
-              <i style={{ "--bar-height": `${Math.max(point.count ? 8 : 2, (point.count / maxDaily) * 100)}%` } as CSSProperties} />
-              <small>{index % 5 === 0 || index === statistics.daily.length - 1 ? formatDate(point.date) : ""}</small>
-            </div>
-          ))}
-        </div>
-      </section>
-
       <section className="statistics-panel" aria-labelledby="element-title">
         <PanelHeading eyebrow="FIVE ELEMENTS" title="오행 분포" description="일간을 기준으로 목·화·토·금·수의 비율을 계산했습니다." id="element-title" />
         <div className="element-stat-grid">
@@ -110,36 +81,11 @@ export function StatisticsPage() {
         </div>
       </section>
 
-      <section className="statistics-panel pillar-map-panel" aria-labelledby="pillar-map-title">
-        <PanelHeading eyebrow="ALL 60 PILLARS" title="60일주 분포" description="색은 오행을, 농도는 등장 횟수를 나타냅니다." id="pillar-map-title" />
-        <div className="pillar-map">
-          {statistics.pillars.map((pillar) => (
-            <article
-              className={`element-${pillar.element}`}
-              key={pillar.cycleIndex}
-              style={{ "--pillar-strength": `${Math.max(2, (pillar.count / maxPillar) * 34)}%` } as CSSProperties}
-              title={`${pillar.ganjiKr}일주 · ${pillar.count}개 · ${pillar.rank}위`}
-            >
-              <span>{pillar.ganji}</span><strong>{pillar.ganjiKr}</strong><small>{pillar.count}</small>
-            </article>
-          ))}
-        </div>
-      </section>
-
       <p className="statistics-note">통계는 약 5분 간격으로 갱신되며 닉네임과 생년월일은 집계에 포함하지 않습니다.</p>
     </div>
   );
 }
 
-function SummaryCard({ label, value, unit }: { label: string; value: number; unit: string }) {
-  return <article><span>{label}</span><strong>{NUMBER.format(value)}</strong><small>{unit}</small></article>;
-}
-
 function PanelHeading({ eyebrow, title, description, id }: { eyebrow: string; title: string; description?: string; id: string }) {
   return <div className="statistics-panel-heading"><p className="eyebrow">{eyebrow}</p><h2 id={id}>{title}</h2>{description && <p>{description}</p>}</div>;
-}
-
-function formatDate(date: string) {
-  const [, month, day] = date.split("-");
-  return `${Number(month)}.${Number(day)}`;
 }
