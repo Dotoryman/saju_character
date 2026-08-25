@@ -23,7 +23,7 @@ export function AdminPage() {
 
   useEffect(() => { if (user?.role === "admin") void refresh().catch((caught) => setStatus(caught instanceof Error ? caught.message : "관리자 데이터를 불러오지 못했습니다.")); }, [user]);
 
-  const filteredContent = useMemo(() => content.filter((item) => `${item.ganjiKr} ${item.themeName} ${item.characterName}`.toLowerCase().includes(query.toLowerCase())), [content, query]);
+  const filteredContent = useMemo(() => content.filter((item) => `${item.pillars.map((pillar) => pillar.ganjiKr).join(" ")} ${item.themeName} ${item.characterName}`.toLowerCase().includes(query.toLowerCase())), [content, query]);
 
   if (loading) return <div className="state-page">권한을 확인하는 중…</div>;
   if (user?.role !== "admin") return <Navigate replace to="/" />;
@@ -35,7 +35,7 @@ export function AdminPage() {
   }
 
   async function saveContent(item: AdminContentRow) {
-    await updateAdminContent(item); setStatus(`${item.ganjiKr} · ${item.characterName} 정보를 저장했습니다.`); await refresh();
+    await updateAdminContent(item); setStatus(`${item.characterName} 정보를 관련 일주 전체에 저장했습니다.`); await refresh();
   }
 
   return (
@@ -46,7 +46,7 @@ export function AdminPage() {
       <p className="admin-status" aria-live="polite">{status}</p>
       {tab === "requests" && <section className="request-inbox">{requests.map((item) => <RequestMessage key={item.request_id} item={item} onSave={saveRequest} />)}{!requests.length && <div className="empty-state"><h2>도착한 수정 요청이 없습니다.</h2></div>}</section>}
       {tab === "users" && <section className="admin-table-wrap"><table><thead><tr><th>아이디</th><th>닉네임</th><th>권한</th><th>저장 사주</th><th>가입일</th><th>최근 로그인</th></tr></thead><tbody>{users.map((item) => <tr key={item.id}><td>{item.username}</td><td>{item.nickname}</td><td>{item.role === "admin" ? "관리자" : "회원"}</td><td>{item.saved_count}</td><td>{formatDate(item.created_at)}</td><td>{item.last_login_at ? formatDate(item.last_login_at) : "—"}</td></tr>)}</tbody></table></section>}
-      {tab === "content" && <section><input className="admin-search" placeholder="일주·작품·캐릭터 검색" value={query} onChange={(event) => setQuery(event.target.value)} /><div className="admin-content-grid">{filteredContent.map((item) => <ContentEditor item={item} key={`${item.cycleIndex}-${item.theme}`} onSave={saveContent} onUpload={async (file) => { setStatus("캐릭터 이미지를 2:3 규격으로 최적화하는 중…"); try { await uploadAdminContentImage(item, file); setStatus("새 이미지를 최적화해 저장했습니다."); await refresh(); } catch (caught) { setStatus(caught instanceof Error ? caught.message : "이미지를 저장하지 못했습니다."); } }} />)}</div></section>}
+      {tab === "content" && <section><input className="admin-search" placeholder="일주·작품·캐릭터 검색" value={query} onChange={(event) => setQuery(event.target.value)} /><p className="admin-content-guide">캐릭터 한 명을 수정하면 아래에 표시된 모든 일주에 한 번에 반영됩니다.</p><div className="admin-content-grid">{filteredContent.map((item) => <ContentEditor item={item} key={`${item.theme}-${item.characterKey}`} onSave={saveContent} onUpload={async (file) => { setStatus("캐릭터 이미지를 2:3 규격으로 최적화하는 중…"); try { await uploadAdminContentImage(item, file); setStatus("새 이미지를 관련 일주 전체에 저장했습니다."); await refresh(); } catch (caught) { setStatus(caught instanceof Error ? caught.message : "이미지를 저장하지 못했습니다."); } }} />)}</div></section>}
       {tab === "animals" && <section><div className="admin-content-grid">{archetypes.map((item) => <ArchetypeEditor item={item} key={item.cycleIndex} onSave={async (draft) => { await updateAdminArchetype(draft); setStatus(`${draft.ganjiKr}일주 대표동물을 저장했습니다.`); await refresh(); }} onUpload={async (file) => { setStatus("동물 이미지를 4:3 규격으로 최적화하는 중…"); try { await uploadAdminArchetypeImage(item, file); setStatus("대표동물 이미지를 최적화해 저장했습니다."); await refresh(); } catch (caught) { setStatus(caught instanceof Error ? caught.message : "이미지를 저장하지 못했습니다."); } }} />)}</div></section>}
     </article>
   );
@@ -78,7 +78,7 @@ function ContentEditor({ item, onSave, onUpload }: { item: AdminContentRow; onSa
     finally { setBusy(false); }
   }
 
-  return <article className={`content-editor ${draft.enabled ? "" : "disabled"}`}><div className="content-editor-image">{draft.imageKey && <img alt={draft.characterName} src={draft.imageKey} />}<label className="image-upload">이미지 교체<input accept="image/jpeg,image/png,image/webp" disabled={busy} type="file" onChange={(event) => { const file = event.target.files?.[0]; event.currentTarget.value = ""; if (file) void handleUpload(file); }} /></label></div><div className="content-editor-fields"><p><strong>{draft.ganjiKr}일주</strong><span>{draft.themeName}</span></p><label><span>캐릭터명</span><input value={draft.characterName} onChange={(event) => setDraft({ ...draft, characterName: event.target.value })} /></label><label><span>한 줄 설명</span><input value={draft.tagline} onChange={(event) => setDraft({ ...draft, tagline: event.target.value })} /></label><label><span>캐릭터 설명</span><textarea value={draft.description} onChange={(event) => setDraft({ ...draft, description: event.target.value })} /></label><div className="content-editor-actions"><label><input checked={draft.enabled} type="checkbox" onChange={(event) => setDraft({ ...draft, enabled: event.target.checked })} /> 공개</label><button className="button primary" disabled={busy} type="button" onClick={() => void handleSave()}>{busy ? "처리 중…" : "저장"}</button></div><p className="editor-status" aria-live="polite">{notice}</p></div></article>;
+  return <article className={`content-editor ${draft.enabled ? "" : "disabled"}`}><div className="content-editor-image">{draft.imageKey && <img alt={draft.characterName} src={draft.imageKey} />}<label className="image-upload">이미지 교체<input accept="image/jpeg,image/png,image/webp" disabled={busy} type="file" onChange={(event) => { const file = event.target.files?.[0]; event.currentTarget.value = ""; if (file) void handleUpload(file); }} /></label></div><div className="content-editor-fields"><p><strong>{draft.characterName}</strong><span>{draft.themeName}</span></p><div className="content-editor-pillars"><span>해당 일주</span><div>{draft.pillars.map((pillar) => <b key={pillar.cycleIndex}>{pillar.ganjiKr}일주</b>)}</div></div><label><span>캐릭터명</span><input value={draft.characterName} onChange={(event) => setDraft({ ...draft, characterName: event.target.value })} /></label><label><span>한 줄 설명</span><input value={draft.tagline} onChange={(event) => setDraft({ ...draft, tagline: event.target.value })} /></label><label><span>캐릭터 설명</span><textarea value={draft.description} onChange={(event) => setDraft({ ...draft, description: event.target.value })} /></label><div className="content-editor-actions"><label><input checked={draft.enabled} type="checkbox" onChange={(event) => setDraft({ ...draft, enabled: event.target.checked })} /> 관련 일주 전체 공개</label><button className="button primary" disabled={busy} type="button" onClick={() => void handleSave()}>{busy ? "처리 중…" : "전체 저장"}</button></div><p className="editor-status" aria-live="polite">{notice}</p></div></article>;
 }
 
 function ArchetypeEditor({ item, onSave, onUpload }: { item: AdminArchetypeRow; onSave: (item: AdminArchetypeRow) => Promise<void>; onUpload: (file: File) => Promise<void> }) {

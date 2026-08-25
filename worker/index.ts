@@ -323,7 +323,7 @@ async function getUploadedImage(pathname: string, env: AppEnv): Promise<Response
 function buildViewModel(
   row: ResultRow,
   characterOverrides: Map<string, ContentOverrideRow>,
-  characterImageOverrides: Map<string, string>,
+  characterContentOverrides: Map<string, CharacterContentOverrideRow>,
   archetypeOverrides: Map<number, ArchetypeOverrideRow>,
 ): ResultViewModel {
   const archetype = getArchetype(row.cycle_index);
@@ -331,7 +331,8 @@ function buildViewModel(
   const animalName = override?.animal_name || archetype.animalName;
   const characters = getCharacterResults(row.cycle_index).flatMap((character) => {
     const characterOverride = characterOverrides.get(`${row.cycle_index}|${character.theme}`);
-    if (characterOverride?.enabled === 0) return [];
+    const globalOverride = characterContentOverrides.get(`${character.theme}|${character.characterName}`);
+    if (globalOverride?.enabled === 0 || (!globalOverride && characterOverride?.enabled === 0)) return [];
     const resolvedCharacter = characterOverride ? {
       ...character,
       characterName: characterOverride.character_name || character.characterName,
@@ -341,8 +342,10 @@ function buildViewModel(
     } : character;
     return [{
       ...resolvedCharacter,
-      imageKey: characterImageOverrides.get(`${resolvedCharacter.theme}|${resolvedCharacter.characterName}`)
-        || resolvedCharacter.imageKey,
+      characterName: globalOverride?.display_name || resolvedCharacter.characterName,
+      tagline: globalOverride?.tagline || resolvedCharacter.tagline,
+      description: globalOverride?.description || resolvedCharacter.description,
+      imageKey: globalOverride?.image_key || resolvedCharacter.imageKey,
     }];
   });
   return {
@@ -370,26 +373,27 @@ async function toViewModels(rows: ResultRow[], env: AppEnv): Promise<ResultViewM
   if (rows.length === 0) return [];
   const cycleIndexes = [...new Set(rows.map((row) => row.cycle_index))];
   const placeholders = cycleIndexes.map(() => "?").join(", ");
-  const [characterQuery, characterImageQuery, archetypeQuery] = await Promise.all([
+  const [characterQuery, characterContentQuery, archetypeQuery] = await Promise.all([
     env.DB.prepare(
       `SELECT cycle_index, theme_slug, character_name, tagline, description, image_key, enabled
        FROM content_overrides WHERE cycle_index IN (${placeholders})`,
     ).bind(...cycleIndexes).all<ContentOverrideRow>(),
     env.DB.prepare(
-      "SELECT theme_slug, character_name, image_key FROM character_image_overrides",
-    ).all<CharacterImageOverrideRow>(),
+      `SELECT theme_slug, character_key, display_name, tagline, description, image_key, enabled
+       FROM character_content_overrides`,
+    ).all<CharacterContentOverrideRow>(),
     env.DB.prepare(
       `SELECT cycle_index, animal_name, description, image_key
        FROM archetype_overrides WHERE cycle_index IN (${placeholders})`,
     ).bind(...cycleIndexes).all<ArchetypeOverrideRow>(),
   ]);
   const characterOverrides = new Map(characterQuery.results.map((item) => [`${item.cycle_index}|${item.theme_slug}`, item]));
-  const characterImageOverrides = new Map(characterImageQuery.results.map((item) => [
-    `${item.theme_slug}|${item.character_name}`,
-    item.image_key,
+  const characterContentOverrides = new Map(characterContentQuery.results.map((item) => [
+    `${item.theme_slug}|${item.character_key}`,
+    item,
   ]));
   const archetypeOverrides = new Map(archetypeQuery.results.map((item) => [item.cycle_index, item]));
-  return rows.map((row) => buildViewModel(row, characterOverrides, characterImageOverrides, archetypeOverrides));
+  return rows.map((row) => buildViewModel(row, characterOverrides, characterContentOverrides, archetypeOverrides));
 }
 
 async function toViewModel(row: ResultRow, env: AppEnv): Promise<ResultViewModel> {
@@ -543,10 +547,14 @@ async function getFeed(url: URL, env: Env): Promise<Response> {
   });
 }
 
-interface CharacterImageOverrideRow {
+interface CharacterContentOverrideRow {
   theme_slug: string;
-  character_name: string;
-  image_key: string;
+  character_key: string;
+  display_name: string | null;
+  tagline: string | null;
+  description: string | null;
+  image_key: string | null;
+  enabled: number;
 }
 
 async function getStatistics(env: AppEnv): Promise<Response> {
@@ -558,7 +566,7 @@ async function getStatistics(env: AppEnv): Promise<Response> {
       "SELECT stat_date, result_count FROM daily_result_stats WHERE stat_date >= ? ORDER BY stat_date",
     ).bind(startDate),
     env.DB.prepare("SELECT visitor_count FROM daily_visitor_counts WHERE visit_date = ? LIMIT 1").bind(today),
-    env.DB.prepare("SELECT theme_slug, character_name, image_key FROM character_image_overrides"),
+    env.DB.prepare("SELECT theme_slug, character_key, image_key FROM character_content_overrides WHERE image_key IS NOT NULL"),
   ]);
   if (!pillarQuery || !dailyQuery || !visitorQuery || !characterImageQuery) throw new Error("통계 집계 결과를 불러오지 못했습니다.");
   const visitors = visitorQuery.results[0] as { visitor_count?: number } | undefined;
@@ -578,7 +586,7 @@ async function getStatistics(env: AppEnv): Promise<Response> {
   });
   const characterImages = new Map(characterImageQuery.results.map((row) => {
     const value = row as Record<string, unknown>;
-    return [`${String(value.theme_slug)}|${String(value.character_name)}`, String(value.image_key)] as const;
+    return [`${String(value.theme_slug)}|${String(value.character_key)}`, String(value.image_key)] as const;
   }));
   statistics.characters = statistics.characters.map((character) => ({
     ...character,
@@ -769,94 +777,98 @@ async function updateAdminRequest(request: Request, requestId: string, env: AppE
 async function adminContent(request: Request, env: AppEnv): Promise<Response> {
   const admin = await requireAdmin(request, env);
   if (admin instanceof Response) return admin;
-  const [overrideQuery, characterImageQuery] = await Promise.all([
-    env.DB.prepare(
-      "SELECT cycle_index, theme_slug, character_name, tagline, description, image_key, enabled FROM content_overrides",
-    ).all<ContentOverrideRow & { cycle_index: number }>(),
-    env.DB.prepare(
-      "SELECT theme_slug, character_name, image_key FROM character_image_overrides",
-    ).all<CharacterImageOverrideRow>(),
-  ]);
-  const { results } = overrideQuery;
-  const overrides = new Map(results.map((item) => [`${item.cycle_index}|${item.theme_slug}`, item]));
-  const characterImages = new Map(characterImageQuery.results.map((item) => [
-    `${item.theme_slug}|${item.character_name}`,
-    item.image_key,
-  ]));
-  const items = Array.from({ length: 60 }, (_, cycleIndex) => getCharacterResults(cycleIndex).map((base) => {
-    const override = overrides.get(`${cycleIndex}|${base.theme}`);
-    return {
-      cycleIndex,
-      ganjiKr: getArchetype(cycleIndex).ganjiKr,
-      theme: base.theme,
-      themeName: base.themeName,
-      characterName: override?.character_name || base.characterName,
-      tagline: override?.tagline || base.tagline,
-      description: override?.description || base.description,
-      imageKey: characterImages.get(`${base.theme}|${override?.character_name || base.characterName}`)
-        || override?.image_key
-        || base.imageKey,
-      enabled: override ? override.enabled === 1 : true,
-      overridden: Boolean(override),
-    };
-  })).flat();
-  return json({ items });
+  const { results } = await env.DB.prepare(
+    `SELECT theme_slug, character_key, display_name, tagline, description, image_key, enabled
+     FROM character_content_overrides`,
+  ).all<CharacterContentOverrideRow>();
+  const overrides = new Map(results.map((item) => [`${item.theme_slug}|${item.character_key}`, item]));
+  const grouped = new Map<string, {
+    theme: string;
+    themeName: string;
+    characterKey: string;
+    characterName: string;
+    tagline: string;
+    description: string;
+    imageKey?: string;
+    enabled: boolean;
+    overridden: boolean;
+    pillars: Array<{ cycleIndex: number; ganjiKr: string }>;
+  }>();
+  for (let cycleIndex = 0; cycleIndex < 60; cycleIndex += 1) {
+    for (const base of getCharacterResults(cycleIndex)) {
+      const key = `${base.theme}|${base.characterName}`;
+      const existing = grouped.get(key);
+      if (existing) {
+        existing.pillars.push({ cycleIndex, ganjiKr: getArchetype(cycleIndex).ganjiKr });
+        continue;
+      }
+      const override = overrides.get(key);
+      grouped.set(key, {
+        theme: base.theme,
+        themeName: base.themeName,
+        characterKey: base.characterName,
+        characterName: override?.display_name || base.characterName,
+        tagline: override?.tagline || base.tagline,
+        description: override?.description || base.description,
+        imageKey: override?.image_key || base.imageKey,
+        enabled: override ? override.enabled === 1 : true,
+        overridden: Boolean(override),
+        pillars: [{ cycleIndex, ganjiKr: getArchetype(cycleIndex).ganjiKr }],
+      });
+    }
+  }
+  return json({ items: [...grouped.values()] });
 }
 
-async function updateAdminContent(request: Request, cycleIndex: number, themeSlug: string, env: AppEnv): Promise<Response> {
+function hasCharacter(themeSlug: string, characterKey: string) {
+  return Array.from({ length: 60 }, (_, cycleIndex) => getCharacterResults(cycleIndex))
+    .some((characters) => characters.some((character) => character.theme === themeSlug && character.characterName === characterKey));
+}
+
+async function updateAdminContent(request: Request, themeSlug: string, characterKey: string, env: AppEnv): Promise<Response> {
   const admin = await requireAdmin(request, env);
   if (admin instanceof Response) return admin;
-  if (!Number.isInteger(cycleIndex) || cycleIndex < 0 || cycleIndex > 59 || !THEMES.some((theme) => theme.slug === themeSlug)) {
-    return json({ error: "캐릭터 위치가 올바르지 않습니다." }, { status: 400 });
+  if (!THEMES.some((theme) => theme.slug === themeSlug) || !hasCharacter(themeSlug, characterKey)) {
+    return json({ error: "캐릭터가 올바르지 않습니다." }, { status: 400 });
   }
   const parsed = updateContentSchema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return json({ error: parsed.error.issues[0]?.message ?? "입력값을 확인해 주세요." }, { status: 400 });
   const now = new Date().toISOString();
   await env.DB.prepare(
-    `INSERT INTO content_overrides (cycle_index, theme_slug, character_name, tagline, description, enabled, updated_by, updated_at)
+    `INSERT INTO character_content_overrides
+       (theme_slug, character_key, display_name, tagline, description, enabled, updated_by, updated_at)
      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-     ON CONFLICT(cycle_index, theme_slug) DO UPDATE SET character_name = excluded.character_name,
+     ON CONFLICT(theme_slug, character_key) DO UPDATE SET display_name = excluded.display_name,
        tagline = excluded.tagline, description = excluded.description, enabled = excluded.enabled,
        updated_by = excluded.updated_by, updated_at = excluded.updated_at`,
-  ).bind(cycleIndex, themeSlug, parsed.data.characterName, parsed.data.tagline, parsed.data.description, parsed.data.enabled ? 1 : 0, admin.id, now).run();
-  await audit(env, admin.id, "update", "character", `${cycleIndex}|${themeSlug}`, parsed.data.characterName);
+  ).bind(themeSlug, characterKey, parsed.data.characterName, parsed.data.tagline, parsed.data.description, parsed.data.enabled ? 1 : 0, admin.id, now).run();
+  await audit(env, admin.id, "update", "character", `${themeSlug}|${characterKey}`, parsed.data.characterName);
   return json({ ok: true });
 }
 
-async function uploadAdminImage(request: Request, cycleIndex: number, themeSlug: string, env: AppEnv): Promise<Response> {
+async function uploadAdminImage(request: Request, themeSlug: string, characterKey: string, env: AppEnv): Promise<Response> {
   const admin = await requireAdmin(request, env);
   if (admin instanceof Response) return admin;
+  if (!THEMES.some((theme) => theme.slug === themeSlug) || !hasCharacter(themeSlug, characterKey)) {
+    return json({ error: "캐릭터가 올바르지 않습니다." }, { status: 400 });
+  }
   const contentLength = Number(request.headers.get("content-length") ?? 0);
   const contentType = request.headers.get("content-type") ?? "";
   if (!request.body || !contentType.startsWith("image/") || contentLength < 1 || contentLength > 5_000_000) {
     return json({ error: "5MB 이하의 이미지 파일을 선택해 주세요." }, { status: 400 });
   }
-  const base = getCharacterResults(cycleIndex).find((item) => item.theme === themeSlug);
-  if (!base) return json({ error: "캐릭터를 찾을 수 없습니다." }, { status: 404 });
-  const existing = await env.DB.prepare(
-    "SELECT character_name FROM content_overrides WHERE cycle_index = ? AND theme_slug = ? LIMIT 1",
-  ).bind(cycleIndex, themeSlug).first<{ character_name: string | null }>();
-  const characterName = existing?.character_name || base.characterName;
   const extension = contentType.includes("png") ? "png" : contentType.includes("webp") ? "webp" : "jpg";
-  const objectKey = `uploads/characters/${cycleIndex}/${themeSlug}-${crypto.randomUUID()}.${extension}`;
+  const objectKey = `uploads/characters/global/${themeSlug}-${crypto.randomUUID()}.${extension}`;
   await env.ASSETS_BUCKET.put(objectKey, request.body, { httpMetadata: { contentType } });
   const imageKey = `/media/uploads/${objectKey.slice("uploads/".length)}`;
   const now = new Date().toISOString();
-  await env.DB.batch([
-    env.DB.prepare(
-    `INSERT INTO content_overrides (cycle_index, theme_slug, character_name, tagline, description, image_key, enabled, updated_by, updated_at)
-     VALUES (?, ?, ?, ?, ?, ?, 1, ?, ?)
-     ON CONFLICT(cycle_index, theme_slug) DO UPDATE SET image_key = excluded.image_key, enabled = 1,
-       updated_by = excluded.updated_by, updated_at = excluded.updated_at`,
-    ).bind(cycleIndex, themeSlug, characterName, base.tagline, base.description, imageKey, admin.id, now),
-    env.DB.prepare(
-      `INSERT INTO character_image_overrides (theme_slug, character_name, image_key, updated_by, updated_at)
-       VALUES (?, ?, ?, ?, ?)
-       ON CONFLICT(theme_slug, character_name) DO UPDATE SET image_key = excluded.image_key,
-         updated_by = excluded.updated_by, updated_at = excluded.updated_at`,
-    ).bind(themeSlug, characterName, imageKey, admin.id, now),
-  ]);
-  await audit(env, admin.id, "upload", "character_image", `${cycleIndex}|${themeSlug}`, objectKey);
+  await env.DB.prepare(
+    `INSERT INTO character_content_overrides (theme_slug, character_key, image_key, enabled, updated_by, updated_at)
+     VALUES (?, ?, ?, 1, ?, ?)
+     ON CONFLICT(theme_slug, character_key) DO UPDATE SET image_key = excluded.image_key,
+       enabled = 1, updated_by = excluded.updated_by, updated_at = excluded.updated_at`,
+  ).bind(themeSlug, characterKey, imageKey, admin.id, now).run();
+  await audit(env, admin.id, "upload", "character_image", `${themeSlug}|${characterKey}`, objectKey);
   return json({ ok: true, imageKey });
 }
 
@@ -971,13 +983,13 @@ async function route(request: Request, env: AppEnv, ctx: ExecutionContext): Prom
   if (pathname === "/api/admin/archetypes" && request.method === "GET") return adminArchetypes(request, env);
   const adminRequestMatch = /^\/api\/admin\/change-requests\/([A-Za-z0-9]+)$/.exec(pathname);
   if (adminRequestMatch?.[1] && request.method === "PATCH") return updateAdminRequest(request, adminRequestMatch[1], env);
-  const adminContentMatch = /^\/api\/admin\/content\/(\d+)\/([a-z-]+)$/.exec(pathname);
+  const adminContentMatch = /^\/api\/admin\/characters\/([a-z-]+)\/([^/]+)$/.exec(pathname);
   if (adminContentMatch?.[1] && adminContentMatch[2] && request.method === "PATCH") {
-    return updateAdminContent(request, Number(adminContentMatch[1]), adminContentMatch[2], env);
+    return updateAdminContent(request, adminContentMatch[1], decodeURIComponent(adminContentMatch[2]), env);
   }
-  const adminImageMatch = /^\/api\/admin\/content\/(\d+)\/([a-z-]+)\/image$/.exec(pathname);
+  const adminImageMatch = /^\/api\/admin\/characters\/([a-z-]+)\/([^/]+)\/image$/.exec(pathname);
   if (adminImageMatch?.[1] && adminImageMatch[2] && request.method === "PUT") {
-    return uploadAdminImage(request, Number(adminImageMatch[1]), adminImageMatch[2], env);
+    return uploadAdminImage(request, adminImageMatch[1], decodeURIComponent(adminImageMatch[2]), env);
   }
   const adminArchetypeMatch = /^\/api\/admin\/archetypes\/(\d+)$/.exec(pathname);
   if (adminArchetypeMatch?.[1] && request.method === "PATCH") return updateAdminArchetype(request, Number(adminArchetypeMatch[1]), env);

@@ -57,7 +57,7 @@ export interface SessionUser {
 export interface AdminSummary { users: number; openRequests: number; todayVisitors: number }
 export interface AdminUserRow { id: number; username: string; nickname: string; role: string; status: string; created_at: string; last_login_at: string | null; saved_count: number }
 export interface ChangeRequestRow { request_id: string; result_url: string | null; request_text: string; status: "pending" | "reviewed" | "completed" | "rejected"; admin_note: string | null; created_at: string; updated_at: string; requester_nickname: string | null; handler_nickname: string | null }
-export interface AdminContentRow { cycleIndex: number; ganjiKr: string; theme: string; themeName: string; characterName: string; tagline: string; description: string; imageKey?: string; enabled: boolean; overridden: boolean }
+export interface AdminContentRow { theme: string; themeName: string; characterKey: string; characterName: string; tagline: string; description: string; imageKey?: string; enabled: boolean; overridden: boolean; pillars: Array<{ cycleIndex: number; ganjiKr: string }> }
 export interface AdminArchetypeRow { cycleIndex: number; ganjiKr: string; animalName: string; description: string; imageKey: string; overridden: boolean }
 
 export async function submitCharacterChangeRequest(input: { resultUrl: string; requestText: string }): Promise<{ ok: true; requestId: string }> {
@@ -120,12 +120,12 @@ export async function fetchAdminContent(): Promise<AdminContentRow[]> {
 }
 
 export async function updateAdminContent(item: AdminContentRow): Promise<void> {
-  await readJson(await fetch(`/api/admin/content/${item.cycleIndex}/${encodeURIComponent(item.theme)}`, { method: "PATCH", headers: { "content-type": "application/json" }, body: JSON.stringify(item) }));
+  await readJson(await fetch(`/api/admin/characters/${encodeURIComponent(item.theme)}/${encodeURIComponent(item.characterKey)}`, { method: "PATCH", headers: { "content-type": "application/json" }, body: JSON.stringify(item) }));
 }
 
 export async function uploadAdminContentImage(item: AdminContentRow, file: File): Promise<string> {
   const optimized = await optimizeAdminImage(file, "character");
-  const response = await fetch(`/api/admin/content/${item.cycleIndex}/${encodeURIComponent(item.theme)}/image`, { method: "PUT", headers: { "content-type": optimized.type }, body: optimized });
+  const response = await fetch(`/api/admin/characters/${encodeURIComponent(item.theme)}/${encodeURIComponent(item.characterKey)}/image`, { method: "PUT", headers: { "content-type": optimized.type }, body: optimized });
   return (await readJson<{ imageKey: string }>(response)).imageKey;
 }
 
