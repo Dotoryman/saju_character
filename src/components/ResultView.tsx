@@ -4,6 +4,7 @@ import { createShareImage, shareImageFileName } from "../features/share/createSh
 import { downloadImage } from "../features/share/downloadImage";
 import { canUseKakaoShare, shareWithKakao } from "../features/share/kakaoShare";
 import { canShareImageFiles, nativeSaveImage, nativeShareImage, nativeShareLink } from "../features/share/nativeShare";
+import { ChangeRequestModal } from "../features/changeRequest/ChangeRequestModal";
 import { fetchStatistics, trackShare } from "../lib/api";
 import type { ResultViewModel } from "../shared/result";
 import type { StatisticsPillarRow } from "../shared/statistics";
@@ -14,6 +15,7 @@ export function ResultView({ result }: { result: ResultViewModel }) {
   const [isSharing, setIsSharing] = useState(false);
   const [animalImageFailed, setAnimalImageFailed] = useState(false);
   const [pillarStatistic, setPillarStatistic] = useState<StatisticsPillarRow | null>(null);
+  const [isRequestOpen, setIsRequestOpen] = useState(false);
   const prefersNativeSave = typeof navigator !== "undefined" && (
     navigator.maxTouchPoints > 0 || /Android|iPhone|iPad/i.test(navigator.userAgent)
   );
@@ -139,6 +141,15 @@ export function ResultView({ result }: { result: ResultViewModel }) {
         </div>
       </section>
 
+      <section className="result-change-request" aria-labelledby="result-change-request-title">
+        <div>
+          <p className="eyebrow">CHARACTER FEEDBACK</p>
+          <h2 id="result-change-request-title">캐릭터가 마음에 들지 않나요?</h2>
+          <p>현재 결과 주소와 함께 원하는 변경 내용을 바로 보내주세요.</p>
+        </div>
+        <button className="button secondary" type="button" onClick={() => setIsRequestOpen(true)}>수정 요청하기</button>
+      </section>
+
       <section className="result-share-section" aria-labelledby="share-title">
         <p className="eyebrow">KEEP &amp; SHARE</p>
         <h2 id="share-title">이제 결과를 간직해보세요.</h2>
@@ -152,6 +163,13 @@ export function ResultView({ result }: { result: ResultViewModel }) {
         <p className="share-help">Instagram은 이미지를 저장한 뒤 앱에서 선택해 주세요.</p>
         <p className="share-status" aria-live="polite">{shareStatus}</p>
       </section>
+
+      <ChangeRequestModal
+        defaultResultUrl={typeof window === "undefined" ? "" : window.location.href}
+        description={`${result.ganjiKr}일주 결과 주소는 자동으로 입력했습니다. 바꾸고 싶은 캐릭터나 이미지를 알려주세요.`}
+        isOpen={isRequestOpen}
+        onClose={() => setIsRequestOpen(false)}
+      />
     </div>
   );
 }

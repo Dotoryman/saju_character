@@ -169,6 +169,11 @@ main { flex: 1; }
 .result-share-section h2 { margin: 14px 0 16px; font-family: "Gowun Batang", serif; font-size: clamp(31px, 4.4vw, 46px); font-weight: 400; letter-spacing: -.045em; }
 .result-share-section > p:not(.eyebrow, .share-help, .share-status) { max-width: 600px; margin: 0 auto 32px; color: var(--muted); line-height: 1.8; word-break: keep-all; }
 .result-share-section .result-actions { justify-content: center; }
+.result-change-request { width: min(100% - 44px, 1120px); margin: 34px auto; padding: 28px 30px; display: flex; align-items: center; justify-content: space-between; gap: 28px; border: 1px solid var(--line); border-radius: 22px; background: color-mix(in srgb, var(--element) 5%, rgba(250,247,240,.82)); box-shadow: var(--shadow-card); }
+.result-change-request .eyebrow { margin: 0 0 7px; color: var(--element); }
+.result-change-request h2 { margin: 0; font-family: var(--font-display); font-size: clamp(23px, 3vw, 31px); font-weight: 500; letter-spacing: -.045em; }
+.result-change-request div > p:last-child { margin: 8px 0 0; color: var(--muted); font-size: 12px; }
+.result-change-request > .button { flex: 0 0 auto; }
 
 .explore-page { width: min(100% - 40px, 1180px); margin: 0 auto; padding: 80px 0 120px; }
 .page-intro { max-width: 700px; margin-bottom: 60px; }
@@ -654,4 +659,6 @@ main { flex: 1; }
   .pillar-map article { padding: 7px; border-radius: 10px; }
   .pillar-map article > span { font-size: 20px; }
   .result-statistic { width: calc(100% - 30px); padding: 20px; align-items: flex-start; flex-direction: column; gap: 14px; }
+  .result-change-request { width: calc(100% - 30px); padding: 22px 20px; align-items: flex-start; flex-direction: column; gap: 18px; }
+  .result-change-request > .button { width: 100%; }
 }
