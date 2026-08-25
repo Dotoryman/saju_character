@@ -145,7 +145,7 @@ export function ResultView({ result }: { result: ResultViewModel }) {
         <div>
           <p className="eyebrow">CHARACTER FEEDBACK</p>
           <h2 id="result-change-request-title">캐릭터가 마음에 들지 않나요?</h2>
-          <p>현재 결과 주소와 함께 원하는 변경 내용을 바로 보내주세요.</p>
+          <p>기죽지 마시고 당당하게 요청하세요.</p>
         </div>
         <button className="button secondary" type="button" onClick={() => setIsRequestOpen(true)}>수정 요청하기</button>
       </section>
