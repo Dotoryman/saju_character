@@ -37,7 +37,9 @@ export async function fetchFeed(cursor?: string): Promise<FeedResponse> {
 }
 
 export async function fetchStatistics(): Promise<StatisticsViewModel> {
-  return readJson<StatisticsViewModel>(await fetch("/api/statistics"));
+  return readJson<StatisticsViewModel>(await fetch("/api/statistics?content=global-character-images-v1", {
+    cache: "no-store",
+  }));
 }
 
 export async function trackShare(publicId: string): Promise<void> {
