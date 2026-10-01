@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "repository": "Dotoryman/saju_character",
+  "project_kind": "web",
+  "checked_date_kst": "2026-10-01",
+  "checked_at_utc": "2026-10-01T00:10:40.756Z",
+  "default_branch": "main",
+  "inspected_commit": "e620e173bca6df53d999ffe00097f741f5441f03",
+  "workflow_run": "https://github.com/Dotoryman/saju_character/actions/runs/36794822092",
+  "inventory": {
+    "tracked_project_files": 81,
+    "tracked_project_bytes": 1189450,
+    "content_sha256": "22f28947df57c0f24071e44afb4a1390444d497b647c0105fd660adcba64a6e9",
+    "package": {
+      "name": "saju_character",
+      "version": "0.6.0",
+      "node": "not declared",
+      "scripts": [
+        "build",
+        "cf-typegen",
+        "db:migrate:local",
+        "db:migrate:remote",
+        "deploy",
+        "deploy:dry",
+        "dev",
+        "test",
+        "test:watch",
+        "typecheck"
+      ],
+      "direct_dependencies": 9,
+      "development_dependencies": 4,
+      "locked_packages": 189,
+      "lockfile_version": 3
+    },
+    "source_files": 42,
+    "test_files": 7,
+    "sql_migrations": 8,
+    "public_assets": 3
+  },
+  "checks": [
+    {
+      "name": "README present and nonempty",
+      "passed": true,
+      "details": "Tracked README.md"
+    },
+    {
+      "name": "npm lock root matches manifest",
+      "passed": true,
+      "details": "Compared name, version and declared dependency specifications; npm ci was not run."
+    },
+    {
+      "name": "Project source inventory nonempty",
+      "passed": true,
+      "details": "src, worker"
+    },
+    {
+      "name": "Cloudflare configuration present",
+      "passed": true,
+      "details": "wrangler.jsonc"
+    }
+  ],
+  "result": "passed",
+  "scope": "Repository structure, manifest consistency and tracked asset references only. Application tests, builds, dependency vulnerability scans and live service availability are not assessed."
+}
